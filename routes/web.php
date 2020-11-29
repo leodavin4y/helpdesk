@@ -28,6 +28,8 @@ Route::post('/logout', 'AuthController@logout')->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
+
+    Route::get('/dashboard/request/store', 'RequestController@store')->name('dashboard.request.store');
 });
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
