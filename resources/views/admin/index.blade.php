@@ -33,20 +33,146 @@
                         </form>
 
                         @isset($users)
-                            @foreach ($users as $user)
-                                <div class="w-100 p-2 border rounded mb-2">
-                                    <span class="badge badge-dark">Имя</span> {{ $user->name }}
-                                    <span class="badge badge-dark ml-2">E-mail</span> {{ $user->email }}
-                                    <form method="post" action="{{ route('admin.users.delete', [$user->id]) }}" class="d-inline-block">
-                                        {{ csrf_field() }}
-                                        <button type="submit" class="btn btn-link text-danger">Удалить</button>
-                                    </form>
-                                </div>
-                            @endforeach
+                            <table class="table table-responsive-md table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Имя</th>
+                                        <th scope="col">Почта</th>
+                                        <th scope="col">Роль</th>
+                                        <th scope="col">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($users as $user)
+                                        <tr>
+                                            <th scope="row">{{ $user->id }}</th>
+                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>
+                                                <span class="small">{{ $user->getRoleName() }}</span>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-link text-primary"
+                                                    data-toggle="modal"
+                                                    data-target="#editProfileModal"
+                                                    onclick="editProfile({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', {{ $user->role }})"
+                                                >
+                                                    Изменить
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-link text-danger"
+                                                    onclick="userDelete({{ $user->id }})"
+                                                >
+                                                    Удалить
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+
                         @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Edit User -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <form method="post" class="modal-content" data-action="{{ route('admin.users.edit', 0) }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Редактировать профиль</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="profileName">Имя</label>
+                        <input type="text" name="name" id="profileName" class="form-control" placeholder="Имя" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileEmail">Почта</label>
+                        <input type="email" name="email" id="profileEmail" class="form-control" placeholder="Почта" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profileRole">Роль</label>
+                        <select class="form-control" name="role" id="profileRole">
+                            <option value="1">Инциатор</option>
+                            <option value="2">Исполнитель</option>
+                            <option value="3">Администратор</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        });
+
+        function editProfile(id, name, email, role)
+        {
+            const form = document.querySelector('#editProfileModal form');
+            const templateURL = form.dataset.action;
+            const nameInput = form.querySelector('input[name="name"]');
+            const emailInput = form.querySelector('input[name="email"]');
+            const options = form.querySelectorAll('option');
+
+            nameInput.value = name;
+            emailInput.value = email;
+            role = role.toString();
+
+            options.forEach(option => {
+                if (option.hasAttribute('selected')) option.removeAttribute('selected');
+                if (option.value === role) option.setAttribute('selected', 'true');
+            });
+
+            form.action = templateURL.replace('0', id);
+
+            $(form).on('submit', (e) => {
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: form.action,
+                    data: $(form).serialize(),
+                    success: (res) => {
+                        alert(res.status ? 'Профиль пользователя изменен' : 'Не удалось');
+                    }
+                })
+            })
+        }
+
+        function userDelete(userId)
+        {
+            const URL = "{{ route('admin.users.delete', 0) }}".replace('0', userId);
+
+            $.ajax({
+                type: 'POST',
+                url: URL,
+                success: (res) => {
+                    alert(res.status ? 'Пользователь успешно удален' : 'Не удалось удалить пользователя');
+                }
+            })
+        }
+    </script>
 @endsection
