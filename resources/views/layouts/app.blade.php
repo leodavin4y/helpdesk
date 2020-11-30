@@ -32,6 +32,7 @@
                 <a class="p-2 text-dark" href="#">Pricing</a>
             @else
                 <a class="p-2 text-dark" href="{{ route('dashboard') }}">Панель управления</a>
+                <a class="p-2 text-dark" href="{{ route('faq') }}">База знаний</a>
 
                 @if (Auth::user()->isAdmin())
                     <a class="p-2 text-dark" href="{{ route('admin.index') }}">Администрирование</a>
