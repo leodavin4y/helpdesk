@@ -18,6 +18,7 @@ class CreateFaqsTable extends Migration
             $table->string('title');
             $table->text('text');
             $table->timestamps();
+
         });
     }
 
