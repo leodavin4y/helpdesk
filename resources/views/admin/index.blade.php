@@ -121,14 +121,6 @@
     </div>
 
     <script>
-        window.addEventListener('load', () => {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-        });
-
         function editProfile(id, name, email, role)
         {
             const form = document.querySelector('#editProfileModal form');

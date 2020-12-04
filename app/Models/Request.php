@@ -23,16 +23,16 @@ class Request extends Model
 
     public function category()
     {
-        return $this->hasOne('App\Models\Category');
+        return $this->hasOne('App\Models\Category', 'id', 'category_id');
     }
 
     public function priority()
     {
-        return $this->hasOne('App\Models\Priority');
+        return $this->hasOne('App\Models\Priority', 'id', 'priority_id');
     }
 
     public function project()
     {
-        return $this->hasOne('App\Models\Project');
+        return $this->hasOne('App\Models\Project', 'id', 'project_id');
     }
 }

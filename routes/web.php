@@ -29,7 +29,9 @@ Route::post('/logout', 'AuthController@logout')->name('logout');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
-    Route::get('/dashboard/request/store', 'RequestController@store')->name('dashboard.request.store');
+    Route::post('/dashboard/request/store', 'DashboardController@storeRequest')->name('dashboard.request.store');
+
+    Route::post('/dashboard/request/{id}/delete', 'DashboardController@deleteRequest')->name('dashboard.request.delete');
 });
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
