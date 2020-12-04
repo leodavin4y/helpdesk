@@ -7,17 +7,17 @@
         <h1 class="h3 py-3 text-center">База знаний</h1>
 
         <p>
-            В нашей базе знаний накоплено {{ $total_count }} совет(ов) по исправлению популярных проблем.
+            В нашей базе знаний накоплено {{ $results->total() }} совет(ов) по исправлению популярных проблем.
             Прежде чем создавать заявку о возникшей неполадке, попробуйте воспользоваться поиском по базе знаний!
         </p>
 
         <div class="row">
             <div class="col-12">
-                <form method="post">
+                <form method="post" class="border p-3 mt-2 mb-3 rounded shadow-sm">
                     {{ csrf_field() }}
-                    <label for="faqs_search">Поиск</label>
+                    <label for="faqs_search" class="h5">Поиск</label>
 
-                    <div class="input-group mb-3">
+                    <div class="input-group">
                         <input
                             type="text"
                             name="search" value="{{ $query ?? '' }}"
@@ -38,11 +38,13 @@
                 </form>
 
                 @isset($query)
-                    <div class="py-2">Найдено результатов: {{ $results_count }}</div>
+                    <div class="h5 py-2">Найдено результатов: {{ $results->total() }}</div>
+                @else
+                    <div class="h5 py-2">Часто возникающие проблемы:</div>
                 @endif
 
                 @foreach($results as $faq)
-                    <div class="card">
+                    <div class="card mb-3 shadow-sm">
                         <div class="card-body">
                             <div class="clearfix">
                                 <h5 class="card-title float-md-left">
@@ -60,6 +62,8 @@
                         </div>
                     </div>
                 @endforeach
+
+                {{ $results->links() }}
             </div>
         </div>
     </div>

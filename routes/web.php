@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 /* База знаний */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/faq', 'FaqController@viewItems')->name('faq');
+    Route::get('/faq', 'FaqController@index')->name('faq');
 
     Route::post('/faq', 'FaqController@search')->name('faq.search');
 });
