@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\Priority;
 use App\Models\Project;
 use App\Models\Request as Req;
+use App\Models\User;
+use App\Models\RequestStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +15,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $user = Auth::user();
 
@@ -27,8 +29,13 @@ class DashboardController extends Controller
                 'priorities' => Priority::all(),
                 'projects' => Project::all()
             ],
-            'active_requests' => Req::all(),
-            'active_requests_count' => Req::count()
+            'active_requests' => Req::where('status_id', '=', $request->post('status', 1))->get(),
+            'active_requests_count' => Req::count(),
+            'request_statuses' => [
+                'statuses' => RequestStatus::all(),
+                'selected' => $request->post('status', 1)
+            ],
+            'workers' => User::where('role', '=', 2)->get()
         ]);
     }
 
@@ -55,6 +62,7 @@ class DashboardController extends Controller
         $req->project_id = $request->input('project_id');
         $req->title = $request->input('title');
         $req->description = $request->input('description');
+        $req->status_id = 1;
 
         $status = $req->save();
 
@@ -71,6 +79,36 @@ class DashboardController extends Controller
 
         return new JsonResponse([
             'status' => $status
+        ]);
+    }
+
+    public function updateStatus(Request $request, int $id)
+    {
+        $this->validate($request, [
+            'status' => 'required|integer|exists:App\Models\RequestStatus,id',
+            'worker' => 'nullable|integer|exists:App\Models\User,id'
+        ]);
+
+        try {
+            $req = Req::find($id);
+
+            if (!$req) throw new \Exception('Заявка не существует');
+
+            $req->status_id = $request->input('status');
+            $req->worker_id = $request->input('worker', null);
+
+            if (!$req->save()) throw new \Exception('Не удалось сохранить');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Статус заявки изменен');
+    }
+
+    public function getUsers(int $role)
+    {
+        return response()->json([
+            'users' => User::where('role', '=', $role)->get()
         ]);
     }
 }

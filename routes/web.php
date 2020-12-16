@@ -42,4 +42,10 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::post('/admin/users/{id}/delete', 'AdminController@usersDelete')->name('admin.users.delete');
 
     Route::post('/admin/users/{id}/edit', 'AdminController@usersEdit')->name('admin.users.edit');
+
+    Route::post('/dashboard', 'DashboardController@index')->name('dashboard.index.sort');
+
+    Route::post('/dashboard/request/{id}/status', 'DashboardController@updateStatus')->name('dashboard.request.status');
+
+    Route::get('/dashboard/users/{role}/get', 'DashboardController@getUsers')->name('dashboard.users.get');
 });
