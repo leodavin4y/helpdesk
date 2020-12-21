@@ -67,7 +67,7 @@
             </tbody>
         </table>
 
-        @if ($requests->hasMorePages())
+        @if ($requests->hasPages())
             <div class="py-3">
                 {{ $requests->links() }}
             </div>

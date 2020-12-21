@@ -33,6 +33,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/request/{id}/delete', 'DashboardController@deleteRequest')->name('dashboard.request.delete');
 
     Route::post('/dashboard/requests/{id}/solved', 'DashboardController@initiatorSolved')->name('dashboard.requests.solved');
+
+    Route::get('/dashboard/requests/{id}', 'DashboardController@show')->name('dashboard.request.show');
+
+    Route::get('/dashboard/messages/{id}/delete', 'DashboardController@messageDelete')->name('dashboard.request.message.delete');
+
+    Route::post('/dashboard/requests/{id}/messages/new', 'DashboardController@messageNew')->name('dashboard.messages.new');
 });
 
 Route::middleware(['auth', 'can:user'])->group(function () {

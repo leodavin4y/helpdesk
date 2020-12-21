@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Message;
 use App\Models\Priority;
 use App\Models\Project;
 use App\Models\Request as Req;
@@ -237,5 +238,59 @@ class DashboardController extends Controller
         return response()->json([
             'users' => User::where('role', '=', $role)->get()
         ]);
+    }
+
+    public function show(int $id)
+    {
+        $req = Req::find($id);
+
+        if (!$req) return back()->with('error', "Заявка #{$id} не существует");
+
+        $messages = Message::where('request_id', '=', $id)
+            ->orderBy('id', 'DESC')
+            ->paginate(30);
+
+        return view('dashboard/request', [
+            'request' => $req,
+            'messages' => $messages
+        ]);
+    }
+
+    public function messageNew(Request $request, int $id, Message $msg)
+    {
+        $this->validate($request, [
+            'text' => 'required|string|min:1'
+        ]);
+        $user = Auth::user();
+        $req = Req::find($id);
+
+        if (!$req) return back()->with('error', 'Заявка не существует');
+        if ($req->user_id !== $user->id && $req->worker_id !== $user->id)
+            return back()->with('error', 'Не хватает прав');
+
+        try {
+            $msg->request_id = $id;
+            $msg->user_id = $user->id;
+            $msg->text = $request->text;
+
+            if (!$msg->save()) throw new \Exception('Failed to store message');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Сообщение успешно сохранено');
+    }
+
+    public function messageDelete(int $id)
+    {
+        $user = Auth::user();
+        $msg = Message::find($id);
+
+        if (!$msg) return back()->with('error', 'Сообщение не найдено');
+        if ($msg->user->id !== $user->id) abort(403);
+
+        $msg->delete();
+
+        return back()->with('success', 'Успешно удалено');
     }
 }
