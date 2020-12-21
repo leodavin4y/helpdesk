@@ -51,38 +51,6 @@
         </div>
     </div>
 
-    @if (Auth::user()->role === 2)
-        <!-- Modal Statuses for worker -->
-        <div class="modal fade" id="workerStatus" tabindex="-1" role="dialog" aria-labelledby="workerStatus" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <form
-                    method="post"
-                    class="modal-content"
-                    action="{{ route('dashboard.requests.worker.done', 0) }}"
-                    data-action="{{ route('dashboard.requests.worker.done', 0) }}"
-                >
-                    {{ csrf_field() }}
-
-                    <div class="modal-header">
-                        <h5 class="modal-title">Подтвердите завершение работ</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <p>Отправить заявку: <q id="worker_req_name"></q> на проверку?</p>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="btn btn-success">На проверку</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endif
-
     <!-- Modal Statuses -->
     <div class="modal fade" id="requestStatusesModal" tabindex="-1" role="dialog" aria-labelledby="requestStatusesModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

@@ -32,15 +32,17 @@
                         <td>{{ $req->title }}</td>
                         <td>{{ $req->user->name }}</td>
                         <td>
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-link text-success py-0"
-                                data-toggle="modal"
-                                data-target="#workerStatus"
-                                onclick="showWorkerStatusModal({{ $req->id }}, '{{ $req->title }}')"
-                            >
-                                На проверку
-                            </button>
+                            @if ($req->status_id === 2)
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-link text-success py-0"
+                                    data-toggle="modal"
+                                    data-target="#workerStatus"
+                                    onclick="showWorkerStatusModal({{ $req->id }}, '{{ $req->title }}')"
+                                >
+                                    На проверку
+                                </button>
+                            @endif
 
                             <button
                                 type="button"
@@ -70,5 +72,35 @@
                 {{ $requests->links() }}
             </div>
         @endif
+    </div>
+</div>
+
+<!-- Modal Statuses for worker -->
+<div class="modal fade" id="workerStatus" tabindex="-1" role="dialog" aria-labelledby="workerStatus" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form
+                method="post"
+                class="modal-content"
+                action="{{ route('dashboard.requests.worker.done', 0) }}"
+                data-action="{{ route('dashboard.requests.worker.done', 0) }}"
+        >
+            {{ csrf_field() }}
+
+            <div class="modal-header">
+                <h5 class="modal-title">Подтвердите завершение работ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <p>Отправить заявку: <q id="worker_req_name"></q> на проверку?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-success">На проверку</button>
+            </div>
+        </form>
     </div>
 </div>

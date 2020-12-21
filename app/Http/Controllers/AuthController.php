@@ -21,28 +21,26 @@ class AuthController extends Controller
                 'password.min' => 'Пароль должен содержать минимум 6 знаков',
                 'password.max' => 'Пароль должен быть не больше 10 символов',
             ];
-            $errors = $this->validate($request, [
+            $this->validate($request, [
                 'name' => 'required|string|min:2|max:100',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|string|min:6|max:10',
-            ], $messages)->all();
+            ], $messages);
 
-            if (count($errors) === 0) {
-                try {
-                    $user = new User();
-                    $user->role = User::ROLE_USER;
-                    $user->name = $request->input('name');
-                    $user->email = $request->input('email');
-                    $user->password = password_hash($request->input('password'), PASSWORD_DEFAULT);
+            try {
+                $user = new User();
+                $user->role = User::ROLE_USER;
+                $user->name = $request->input('name');
+                $user->email = $request->input('email');
+                $user->password = password_hash($request->input('password'), PASSWORD_DEFAULT);
 
-                    if (!$user->save()) throw new \Exception('Failed to store user');
+                if (!$user->save()) throw new \Exception('Failed to store user');
 
-                    Auth::login($user);
+                Auth::login($user);
 
-                    return redirect()->route('dashboard');
-                } catch (\Exception $e) {
-                    $errors = [$e->getMessage()];
-                }
+                return redirect()->route('dashboard');
+            } catch (\Exception $e) {
+                $errors = [$e->getMessage()];
             }
         }
 
@@ -56,32 +54,29 @@ class AuthController extends Controller
         if (Auth::user()) return redirect()->route('dashboard');
 
         if ($request->getMethod() === 'POST') {
-            $rules = [
+            $this->validate($request, [
                 'email' => 'required|email',
                 'password' => 'required|string|min:6|:max:10',
-            ];
-            $errors = $this->validate($request, $rules)->all();
+            ]);
 
-            if (count($errors) === 0) {
-                try {
-                    $email = $request->input('email');
-                    $password = $request->input('password');
-                    $user = User::where('email', $email)->first();
+            try {
+                $email = $request->input('email');
+                $password = $request->input('password');
+                $user = User::where('email', $email)->first();
 
-                    if (!$user) throw new \Exception('User not found', 1);
-                    if (!password_verify($password, $user->password)) throw new \Exception('Wrong password', 2);
+                if (!$user) throw new \Exception('User not found', 1);
+                if (!password_verify($password, $user->password)) throw new \Exception('Wrong password', 2);
 
-                    Auth::login($user);
+                Auth::login($user);
 
-                    return redirect()->route('dashboard');
-                } catch (\Exception $e) {
-                    $messages = [
-                        1 => 'Пользователь не существует',
-                        2 => 'Неверный пароль'
-                    ];
-                    $error = $messages[$e->getCode()] ?? 'Произошла ошибка';
-                    $errors = [$error];
-                }
+                return redirect()->route('dashboard');
+            } catch (\Exception $e) {
+                $messages = [
+                    1 => 'Пользователь не существует',
+                    2 => 'Неверный пароль'
+                ];
+                $error = $messages[$e->getCode()] ?? 'Произошла ошибка';
+                $errors = [$error];
             }
         }
 
