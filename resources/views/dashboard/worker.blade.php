@@ -29,7 +29,9 @@
                         <td>{{ $req->category->name }}</td>
                         <td>{{ $req->priority->name }}</td>
                         <td>{{ $req->project->name }}</td>
-                        <td>{{ $req->title }}</td>
+                        <td>
+                            <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
+                        </td>
                         <td>{{ $req->user->name }}</td>
                         <td>
                             @if ($req->status_id === 2)

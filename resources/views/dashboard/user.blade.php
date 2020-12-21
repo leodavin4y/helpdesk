@@ -28,8 +28,10 @@
                         <td>{{ $req->category->name }}</td>
                         <td>{{ $req->priority->name }}</td>
                         <td>{{ $req->project->name }}</td>
-                        <td>{{ $req->title }}</td>
                         <td>
+                            <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
+                        </td>
+                        <td >
                             @if ($req->status_id === 3)
                                 <button
                                     type="button"
