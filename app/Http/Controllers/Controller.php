@@ -21,7 +21,7 @@ class Controller extends BaseController
      * @param array $customAttributes
      * @return array|\Illuminate\Support\MessageBag
      */
-    public function validate(
+    public function validateCustom(
         Request $request,
         array $rules,
         array $messages = [],
