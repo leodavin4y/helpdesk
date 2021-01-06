@@ -6,6 +6,12 @@
     <div class="container">
         <h1 class="h3 py-3 text-center">База знаний</h1>
 
+        @if (Auth::user() && Auth::user()->isAdmin())
+            <div class="py-2">
+                <a href="{{ route('faq.store') }}">Добавить запись</a>
+            </div>
+        @endif
+
         <p>
             В нашей базе знаний накоплено {{ $results->total() }} совет(ов) по исправлению популярных проблем.
             Прежде чем создавать заявку о возникшей неполадке, попробуйте воспользоваться поиском по базе знаний!
@@ -39,8 +45,10 @@
 
                 @isset($query)
                     <div class="h5 py-2">Найдено результатов: {{ $results->total() }}</div>
-                @else
+                @elseif (count($results) > 0)
                     <div class="h5 py-2">Часто возникающие проблемы:</div>
+                @else
+                    <div class="alert alert-info">В данный момент база знаний пуста ...</div>
                 @endif
 
                 @foreach($results as $faq)

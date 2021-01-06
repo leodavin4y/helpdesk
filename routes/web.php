@@ -45,4 +45,8 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::post('/admin/users/{id}/delete', 'AdminController@usersDelete')->name('admin.users.delete');
 
     Route::post('/admin/users/{id}/edit', 'AdminController@usersEdit')->name('admin.users.edit');
+
+    Route::get('/faq/store', 'FaqController@store')->name('faq.store');
+
+    Route::post('/faq/store', 'FaqController@store');
 });
