@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Route;
 /* База знаний */
 Route::middleware(['auth'])->group(function () {
     Route::get('/faq', 'FaqController@index')->name('faq');
-
     Route::post('/faq', 'FaqController@search')->name('faq.search');
+
+    Route::get('/faq/{id}', 'FaqController@view')
+        ->where('id', '[0-9]+')
+        ->name('faq.view');
 });
 
 Route::get('/', 'HomeController@home')->name('home');
@@ -47,6 +50,12 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::post('/admin/users/{id}/edit', 'AdminController@usersEdit')->name('admin.users.edit');
 
     Route::get('/faq/store', 'FaqController@store')->name('faq.store');
+    Route::post('/faq/store', 'FaqController@storeFAQ');
 
-    Route::post('/faq/store', 'FaqController@store');
+    Route::get('/faq/{id}/edit', 'FaqController@edit')->name('faq.edit');
+    Route::post('/faq/{id}/edit', 'FaqController@edit');
+
+    Route::get('/faq/{id}/delete', 'FaqController@delete')
+        ->where('id', '[0-9]+')
+        ->name('faq.delete');
 });

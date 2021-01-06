@@ -56,32 +56,29 @@ class AuthController extends Controller
         if (Auth::user()) return redirect()->route('dashboard');
 
         if ($request->getMethod() === 'POST') {
-            $rules = [
+            $this->validate($request, [
                 'email' => 'required|email',
                 'password' => 'required|string|min:6|:max:10',
-            ];
-            $errors = $this->validate($request, $rules)->all();
+            ]);
 
-            if (count($errors) === 0) {
-                try {
-                    $email = $request->input('email');
-                    $password = $request->input('password');
-                    $user = User::where('email', $email)->first();
+            try {
+                $email = $request->input('email');
+                $password = $request->input('password');
+                $user = User::where('email', $email)->first();
 
-                    if (!$user) throw new \Exception('User not found', 1);
-                    if (!password_verify($password, $user->password)) throw new \Exception('Wrong password', 2);
+                if (!$user) throw new \Exception('User not found', 1);
+                if (!password_verify($password, $user->password)) throw new \Exception('Wrong password', 2);
 
-                    Auth::login($user);
+                Auth::login($user);
 
-                    return redirect()->route('dashboard');
-                } catch (\Exception $e) {
-                    $messages = [
-                        1 => 'Пользователь не существует',
-                        2 => 'Неверный пароль'
-                    ];
-                    $error = $messages[$e->getCode()] ?? 'Произошла ошибка';
-                    $errors = [$error];
-                }
+                return redirect()->route('dashboard');
+            } catch (\Exception $e) {
+                $messages = [
+                    1 => 'Пользователь не существует',
+                    2 => 'Неверный пароль'
+                ];
+                $error = $messages[$e->getCode()] ?? 'Произошла ошибка';
+                $errors = [$error];
             }
         }
 

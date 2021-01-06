@@ -4,11 +4,32 @@
 
 @section('content')
     <div class="container">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item active">База знаний</li>
+        </ol>
+
         <h1 class="h3 py-3 text-center">База знаний</h1>
+
+        @if ($message = Session::get('error'))
+            <div class="alert alert-danger alert-block">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {{ $message }}
+            </div>
+        @endif
+
+        @if ($message = Session::get('success'))
+            <div class="alert alert-success alert-block">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {!! $message !!}
+            </div>
+        @endif
 
         @if (Auth::user() && Auth::user()->isAdmin())
             <div class="py-2">
-                <a href="{{ route('faq.store') }}">Добавить запись</a>
+                <a href="{{ route('faq.store') }}" class="btn btn-sm btn-light">
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> Добавить
+                </a>
             </div>
         @endif
 
@@ -62,11 +83,13 @@
                                 <span class="small text-muted float-md-right">{{ date('d-m-Y, H:i', strtotime($faq->created_at)) }}</span>
                             </div>
 
-                            <p class="card-text">
-                                {{ $faq->text }}
-                            </p>
+                            <div class="card-text">
+                                {!! $faq->text !!}
+                            </div>
 
-                            <a href="#" class="btn btn-primary">Детальнее</a>
+                            <a href="{{ route('faq.view', [$faq->id]) }}" class="btn btn-primary">Детальнее</a>
+                            <a href="{{ route('faq.edit', [$faq->id]) }}" class="btn btn-sm btn-link">Изменить</a>
+                            <a href="{{ route('faq.delete', [$faq->id]) }}" class="btn btn-sm btn-link text-danger">Удалить</a>
                         </div>
                     </div>
                 @endforeach

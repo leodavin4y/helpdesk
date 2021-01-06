@@ -4,31 +4,31 @@
 
 @section('content')
     <div class="container">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('faq') }}">База знаний</a></li>
+            @if (isset($faq))
+                <li class="breadcrumb-item active"><a href="{{ route('faq.view', [$faq->id]) }}">{{ $faq->title }}</a></li>
+            @else
+                <li class="breadcrumb-item active">Добавить</li>
+            @endif
+        </ol>
+
         <h1 class="h3 py-3 text-center">База знаний</h1>
 
         <div class="row">
             <div class="col-12">
-                <form method="post" class="border p-3 mt-2 mb-3 rounded shadow-sm">
-                    <h2 class="h4">Новая заметка</h2>
-                    {{ csrf_field() }}
-
-                    <div class="form-group">
-                        <label for="faq_title">Заголовок</label>
-                        <input type="text" id="faq_title" name="title" class="form-control" placeholder="Заголовок заметки" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="faq_text">Текст</label>
-                        <textarea id="faq_text" name="text" class="form-control" placeholder="Текст заметки"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Сохранить в базе знаний</button>
-                </form>
-
                 @if ($message = Session::get('error'))
                     <div class="alert alert-danger alert-block">
                         <button type="button" class="close" data-dismiss="alert">×</button>
-                        <strong>{{ $message }}</strong>
+                        {{ $message }}
+                    </div>
+                @endif
+
+                @if ($message = Session::get('success'))
+                    <div class="alert alert-success alert-block">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        {!! $message !!}
                     </div>
                 @endif
 
@@ -43,11 +43,47 @@
                     </div>
                 @endif
 
-                @if ($message = Session::get('success'))
-                    <div class="alert alert-success alert-block">
-                        <button type="button" class="close" data-dismiss="alert">×</button>
-                        <strong>{{ $message }}</strong>
-                    </div>
+                @if (isset($faq))
+                    <a href="{{ route('faq.view', [$faq->id]) }}" class="btn btn-sm btn-light">
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        Вернуться к заметке
+                    </a>
+
+                    <form method="post" class="border p-3 mt-2 mb-3 rounded shadow-sm">
+                        <h2 class="h4">Редактирование заметки</h2>
+                        {{ csrf_field() }}
+
+                        <div class="form-group">
+                            <label for="faq_title">Заголовок</label>
+                            <input type="text" value="{{ $faq->title }}" id="faq_title" name="title" class="form-control" placeholder="Заголовок заметки" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="faq_text">Текст</label>
+                            <textarea id="faq_text" name="text" class="form-control" placeholder="Текст заметки">
+                                {{ $faq->text }}
+                            </textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Сохранить в базе знаний</button>
+                    </form>
+                @else
+                    <form method="post" class="border p-3 mt-2 mb-3 rounded shadow-sm">
+                        <h2 class="h4">Новая заметка</h2>
+                        {{ csrf_field() }}
+
+                        <div class="form-group">
+                            <label for="faq_title">Заголовок</label>
+                            <input type="text" id="faq_title" name="title" class="form-control" placeholder="Заголовок заметки" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="faq_text">Текст</label>
+                            <textarea id="faq_text" name="text" class="form-control" placeholder="Текст заметки"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Сохранить в базе знаний</button>
+                    </form>
                 @endif
             </div>
         </div>
