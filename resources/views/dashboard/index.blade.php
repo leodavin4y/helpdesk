@@ -210,14 +210,14 @@
                         $(`<option value=${user.id}>${user.name}</option>`).appendTo(select)
                     });
 
-                    $('#modal_status').val(2).attr('disabled', true);
+                    $('#modal_status').val(2).on('change', () => wrap.remove());
                 }
             });
 
             // Событие закрытия окна
             $('#requestStatusesModal').on('hidden.bs.modal', function () {
                 wrap.remove();
-                $('#modal_status').removeAttr('disabled');
+                // $('#modal_status').parent().show();
             })
         }
 
