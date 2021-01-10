@@ -3,8 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
-class CreateUsersTable extends Migration
+class CreateFaqsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +14,15 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('faqs', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->string('email')->unique();
-            $table->unsignedSmallInteger('role');
-            $table->string('password');
+            $table->string('title');
+            $table->text('text');
             $table->timestamps();
         });
+
+        // Full Text Index
+        DB::statement('ALTER TABLE faqs ADD FULLTEXT fulltext_index (`title`, `text`)');
     }
 
     /**
@@ -30,6 +32,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('faqs');
     }
 }

@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/* База знаний */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/faq', 'FaqController@index')->name('faq');
+    Route::post('/faq', 'FaqController@search')->name('faq.search');
+
+    Route::get('/faq/{id}', 'FaqController@view')
+        ->where('id', '[0-9]+')
+        ->name('faq.view');
+});
+
 Route::get('/', 'HomeController@home')->name('home');
 
 /* Регистрация и авторизация */
@@ -25,6 +35,7 @@ Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout')->name('logout');
 
 /* Группа маршрутов требующих авторизации */
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
@@ -60,6 +71,16 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::post('/admin/users/{id}/delete', 'AdminController@usersDelete')->name('admin.users.delete');
 
     Route::post('/admin/users/{id}/edit', 'AdminController@usersEdit')->name('admin.users.edit');
+
+    Route::get('/faq/store', 'FaqController@store')->name('faq.store');
+    Route::post('/faq/store', 'FaqController@storeFAQ');
+
+    Route::get('/faq/{id}/edit', 'FaqController@edit')->name('faq.edit');
+    Route::post('/faq/{id}/edit', 'FaqController@edit');
+
+    Route::get('/faq/{id}/delete', 'FaqController@delete')
+        ->where('id', '[0-9]+')
+        ->name('faq.delete');
 
     Route::any('/admin/dashboard', 'DashboardController@adminBoard')->name('dashboard.admin');
 
