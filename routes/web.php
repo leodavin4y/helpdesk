@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/* База знаний */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/faq', 'FaqController@index')->name('faq');
+    Route::post('/faq', 'FaqController@search')->name('faq.search');
+
+    Route::get('/faq/{id}', 'FaqController@view')
+        ->where('id', '[0-9]+')
+        ->name('faq.view');
+});
+
 Route::get('/', 'HomeController@home')->name('home');
 
 /* Регистрация и авторизация */
@@ -25,31 +35,9 @@ Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout')->name('logout');
 
 /* Группа маршрутов требующих авторизации */
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
-
-    Route::post('/dashboard/request/store', 'DashboardController@storeRequest')->name('dashboard.request.store');
-
-    Route::post('/dashboard/request/{id}/delete', 'DashboardController@deleteRequest')->name('dashboard.request.delete');
-
-    Route::post('/dashboard/requests/{id}/solved', 'DashboardController@initiatorSolved')->name('dashboard.requests.solved');
-
-    Route::get('/dashboard/requests/{id}', 'DashboardController@show')->name('dashboard.request.show');
-
-    Route::get('/dashboard/messages/{id}/delete', 'DashboardController@messageDelete')->name('dashboard.request.message.delete');
-
-    Route::post('/dashboard/requests/{id}/messages/new', 'DashboardController@messageNew')->name('dashboard.messages.new');
-});
-
-Route::middleware(['auth', 'can:user'])->group(function () {
-    Route::get('/user/dashboard', 'DashboardController@userBoard')->name('dashboard.user');
-});
-
-Route::middleware(['auth', 'can:worker'])->group(function () {
-    Route::get('/worker/dashboard', 'DashboardController@workerBoard')->name('dashboard.worker');
-
-    // Работник устанавливает статус заявки - "на проверке"
-    Route::post('/dashboard/requests/{id}/done', 'DashboardController@workerDone')->name('dashboard.requests.worker.done');
 });
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
@@ -61,10 +49,13 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::post('/admin/users/{id}/edit', 'AdminController@usersEdit')->name('admin.users.edit');
 
-    Route::any('/admin/dashboard', 'DashboardController@adminBoard')->name('dashboard.admin');
+    Route::get('/faq/store', 'FaqController@store')->name('faq.store');
+    Route::post('/faq/store', 'FaqController@storeFAQ');
 
-    Route::post('/dashboard/request/{id}/status', 'DashboardController@updateStatus')->name('dashboard.request.status');
+    Route::get('/faq/{id}/edit', 'FaqController@edit')->name('faq.edit');
+    Route::post('/faq/{id}/edit', 'FaqController@edit');
 
-    Route::get('/dashboard/users/{role}/get', 'DashboardController@getUsers')->name('dashboard.users.get');
+    Route::get('/faq/{id}/delete', 'FaqController@delete')
+        ->where('id', '[0-9]+')
+        ->name('faq.delete');
 });
-
