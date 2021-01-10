@@ -89,7 +89,7 @@
 
                             <a href="{{ route('faq.view', [$faq->id]) }}" class="btn btn-primary">Детальнее</a>
 
-                            @if (Auth::user()->role === 3)
+                            @if (($user = Auth::user()) && $user->role === 3)
                                 <a href="{{ route('faq.edit', [$faq->id]) }}" class="btn btn-sm btn-link">Изменить</a>
                                 <a href="{{ route('faq.delete', [$faq->id]) }}" class="btn btn-sm btn-link text-danger">Удалить</a>
                             @endif

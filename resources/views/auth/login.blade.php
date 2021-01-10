@@ -28,6 +28,8 @@
                 <button type="submit" class="btn btn-success">Войти</button>
             </form>
 
+            <div class="py-2 alert bg-light text-center">Нет учетной записи? <a href="{{ route('register') }}">Регистрация</a></div>
+
             @if (count($errors) > 0)
                 <div class="alert alert-danger">
                     <ul class="m-0 p-0 pl-2">

@@ -14,14 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 /* База знаний */
-Route::middleware(['auth'])->group(function () {
-    Route::get('/faq', 'FaqController@index')->name('faq');
-    Route::post('/faq', 'FaqController@search')->name('faq.search');
+Route::get('/faq', 'FaqController@index')->name('faq');
+Route::post('/faq', 'FaqController@search')->name('faq.search');
 
-    Route::get('/faq/{id}', 'FaqController@view')
-        ->where('id', '[0-9]+')
-        ->name('faq.view');
-});
+Route::get('/faq/{id}', 'FaqController@view')
+    ->where('id', '[0-9]+')
+    ->name('faq.view');
 
 Route::get('/', 'HomeController@home')->name('home');
 

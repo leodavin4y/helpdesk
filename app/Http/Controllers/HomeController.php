@@ -20,6 +20,6 @@ class HomeController extends Controller
     {
         if (Auth::user()) return redirect()->route('dashboard');
 
-        return view('home/index');
+        return redirect()->route('login');
     }
 }
