@@ -6,3 +6,9 @@
     border-color: #f8f9fa !important;
     color: #333 !important;
 }
+.text-overflow {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
