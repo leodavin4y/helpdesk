@@ -4,6 +4,11 @@
 
 @section('content')
     <div class="container">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item active">Управление</li>
+        </ol>
+
         <h1 class="h3 py-3 text-center">Панель управления</h1>
 
         <div class="row">

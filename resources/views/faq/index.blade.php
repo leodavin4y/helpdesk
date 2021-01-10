@@ -83,13 +83,16 @@
                                 <span class="small text-muted float-md-right">{{ date('d-m-Y, H:i', strtotime($faq->created_at)) }}</span>
                             </div>
 
-                            <div class="card-text">
+                            <div class="card-text text-overflow mb-2">
                                 {!! $faq->text !!}
                             </div>
 
                             <a href="{{ route('faq.view', [$faq->id]) }}" class="btn btn-primary">Детальнее</a>
-                            <a href="{{ route('faq.edit', [$faq->id]) }}" class="btn btn-sm btn-link">Изменить</a>
-                            <a href="{{ route('faq.delete', [$faq->id]) }}" class="btn btn-sm btn-link text-danger">Удалить</a>
+
+                            @if (Auth::user()->role === 3)
+                                <a href="{{ route('faq.edit', [$faq->id]) }}" class="btn btn-sm btn-link">Изменить</a>
+                                <a href="{{ route('faq.delete', [$faq->id]) }}" class="btn btn-sm btn-link text-danger">Удалить</a>
+                            @endif
                         </div>
                     </div>
                 @endforeach

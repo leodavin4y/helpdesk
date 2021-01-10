@@ -4,6 +4,11 @@
 
 @section('content')
     <div class="container">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item active">Заявка #{{ $request->id }}</li>
+        </ol>
+
         <h1 class="h5 pt-3">Заявка #{{ $request->id }}</h1>
         <h2 class="h5 pb-3">{{ $request->title }}</h2>
         <div>Инициатор: {{ $request->user->name }}</div>
