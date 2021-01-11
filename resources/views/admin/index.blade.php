@@ -99,6 +99,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
+                        <button type="button" onclick="$('#newPassWrap').toggle()" class="btn btn-sm btn-light">Сбросить пароль</button>
+
+                        <div id="newPassWrap" class="mt-2" style="display: none">
+                            <label for="newPass">Введите новый пароль</label>
+                            <input type="password" name="password" id="newPass" class="form-control" placeholder="От 6 до 20 символов">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label for="profileName">Имя</label>
                         <input type="text" name="name" id="profileName" class="form-control" placeholder="Имя" required>
                     </div>

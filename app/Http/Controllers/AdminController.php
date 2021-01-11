@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Models\User;
 
@@ -40,22 +40,23 @@ class AdminController extends Controller
 
     public function usersEdit(Request $request, int $userId)
     {
-        $errors = $this->validate($request, [
+        $this->validate($request, [
             'name' => 'required|string|min:1|max:255',
             'email' => 'required|email|max:255',
-            'role' => 'required|string|max:1|min:1'
+            'role' => 'required|numeric|digits_between:1,3',
+            'password' => 'nullable|string|min:6|max:20'
         ]);
-        $roleId = intval($request->input('role'));
-
-        if (!in_array($roleId, [1, 2, 3])) abort(422);
 
         $user = User::find($userId);
-
         if (!$user) abort(404);
 
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->role = $roleId;
+        $user->role = intval($request->role);
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->input('password')) {
+            $user->password = Hash::make($request->input('password'));
+        }
 
         return new JsonResponse([
             'status' =>  $user->save()
