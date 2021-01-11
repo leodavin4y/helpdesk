@@ -13,7 +13,10 @@ class AdminController extends Controller
 {
     public function index(): View
     {
-        return view('admin/index');
+        return view('admin/index', [
+            'users' => User::paginate(),
+            'users_total' => User::count()
+        ]);
     }
 
     public function usersSearch(Request $request)
@@ -26,14 +29,16 @@ class AdminController extends Controller
         $users = DB::table('users')
             ->where('name', 'LIKE', "%{$search}%")
             ->orWhere('email', 'LIKE', "%{$search}%")
-            ->get();
+            ->paginate();
 
-        $users = $users->map(function($user) {
+        // items as model (default array)
+        $users->getCollection()->transform(function ($user) {
             return (new User())->fill((array) $user);
         });
 
         return view('admin/index', [
             'users' => $users,
+            'users_total' => User::count(),
             'search' => $search
         ]);
     }

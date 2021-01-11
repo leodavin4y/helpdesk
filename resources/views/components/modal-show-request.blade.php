@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Заголовок</label>
+                        <label for="description">Описание</label>
                         <textarea name="description" class="form-control" placeholder="Полное описание проблемы" disabled></textarea>
                     </div>
                 </div>

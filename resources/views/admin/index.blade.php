@@ -17,6 +17,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="#users" data-toggle="tab" aria-controls="users" aria-selected="true">
                             <i class="fa fa-users" aria-hidden="true"></i> Пользователи
+                            <span class="badge badge-dark rounded-pill px-2">{{ $users_total }}</span>
                         </a>
                     </li>
                 </ul>
@@ -36,6 +37,8 @@
                                 </div>
                             </div>
                         </form>
+
+                        <div class="small pb-1">Найдено: {{ $users->total() }} / Отображается: {{ $users->count() }}</div>
 
                         @isset($users)
                             <table class="table table-responsive-md table-striped">
@@ -80,6 +83,7 @@
                                 </tbody>
                             </table>
 
+                            {{ $users->links() }}
                         @endif
                     </div>
                 </div>
