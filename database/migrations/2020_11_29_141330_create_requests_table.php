@@ -22,9 +22,6 @@ class CreateRequestsTable extends Migration
             $table->bigInteger('priority_id')->unsigned();
             $table->foreign('priority_id')->references('id')->on('priorities');
 
-            $table->bigInteger('project_id')->unsigned();
-            $table->foreign('project_id')->references('id')->on('projects');
-
             $table->string('title');
             $table->text('description');
 
