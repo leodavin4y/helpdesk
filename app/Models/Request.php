@@ -31,11 +31,6 @@ class Request extends Model
         return $this->hasOne('App\Models\Priority', 'id', 'priority_id');
     }
 
-    public function project()
-    {
-        return $this->hasOne('App\Models\Project', 'id', 'project_id');
-    }
-
     public function status()
     {
         return $this->hasOne('App\Models\RequestStatus', 'id', 'status_id');

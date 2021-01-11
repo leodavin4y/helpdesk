@@ -164,7 +164,7 @@
             $('#requestShow select[name="priority_id"]').val(req.priority_id);
 
             // set project
-            $('#requestShow select[name="project_id"]').val(req.project_id);
+            // $('#requestShow select[name="project_id"]').val(req.project_id);
 
             // set title
             $('#requestShow input[name="title"]').val(req.title);

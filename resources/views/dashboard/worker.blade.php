@@ -16,7 +16,6 @@
                     <th scope="col">#</th>
                     <th scope="col">Категория</th>
                     <th scope="col">Приоритет</th>
-                    <th scope="col">Проект</th>
                     <th scope="col">Заголовок</th>
                     <th scope="col">Инициатор</th>
                     <th scope="col">Действие</th>
@@ -28,7 +27,6 @@
                         <th scope="row">{{ $req->id }}</th>
                         <td>{{ $req->category->name }}</td>
                         <td>{{ $req->priority->name }}</td>
-                        <td>{{ $req->project->name }}</td>
                         <td>
                             <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
                         </td>

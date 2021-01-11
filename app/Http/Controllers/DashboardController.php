@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Message;
 use App\Models\Priority;
-use App\Models\Project;
 use App\Models\Request as Req;
 use App\Models\User;
 use App\Models\RequestStatus;
@@ -45,7 +44,6 @@ class DashboardController extends Controller
                 'sub' => Category::whereNotNull('parent_id')->get()
             ],
             'priorities' => Priority::all(),
-            'projects' => Project::all()
         ];
     }
 
@@ -134,7 +132,6 @@ class DashboardController extends Controller
             'category_id' => 'required|string|min:1|max:10',
             'subcategory_id' => 'nullable|string|min:1|max:10',
             'priority_id' => 'required|string|min:1|max:10',
-            'project_id' => 'required|string|min:1|max:10',
             'title' => 'required|string|min:2|max:255',
             'description' => 'required|string|min:2|max:60000'
         ]);
@@ -147,7 +144,6 @@ class DashboardController extends Controller
 
             $req->category_id = $subCatId ? $subCatId : $request->input('category_id');
             $req->priority_id = $request->input('priority_id');
-            $req->project_id = $request->input('project_id');
             $req->user_id = $user->id;
             $req->title = $request->input('title');
             $req->description = $request->input('description');

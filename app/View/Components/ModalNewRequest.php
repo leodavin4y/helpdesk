@@ -5,7 +5,6 @@ namespace App\View\Components;
 use Illuminate\View\Component;
 use App\Models\Category;
 use App\Models\Priority;
-use App\Models\Project;
 
 class ModalNewRequest extends Component
 {
@@ -24,7 +23,6 @@ class ModalNewRequest extends Component
                 'sub' => Category::whereNotNull('parent_id')->get()
             ],
             'priorities' => Priority::all(),
-            'projects' => Project::all()
         ];
     }
 

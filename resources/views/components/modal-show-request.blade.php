@@ -34,15 +34,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="priority">Проект</label>
-                        <select name="project_id" class="form-control" disabled>
-                            @foreach ($requestForm['projects'] as $project)
-                                <option value="{{ $project->id }}">{{ $project->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
                         <label for="title">Заголовок заявки</label>
                         <input type="text" name="title" class="form-control" placeholder="Краткое описание проблемы" disabled>
                     </div>
