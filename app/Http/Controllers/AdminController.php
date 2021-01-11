@@ -18,16 +18,9 @@ class AdminController extends Controller
 
     public function usersSearch(Request $request)
     {
-        $rules = [
+        $this->validate($request, [
             'search' => 'required|string'
-        ];
-        $errors = $this->validate($request, $rules)->all();
-
-        if (count($errors) > 0) {
-            return view('admin/index', [
-                'errors' => $errors
-            ]);
-        }
+        ]);
 
         $search = $request->input('search');
         $users = DB::table('users')
@@ -47,15 +40,14 @@ class AdminController extends Controller
 
     public function usersEdit(Request $request, int $userId)
     {
-        $rules = [
+        $errors = $this->validate($request, [
             'name' => 'required|string|min:1|max:255',
             'email' => 'required|email|max:255',
             'role' => 'required|string|max:1|min:1'
-        ];
-        $errors = $this->validate($request, $rules)->all();
+        ]);
         $roleId = intval($request->input('role'));
 
-        if (count($errors) > 0 || $roleId <= 0 || $roleId >= 4) abort(422);
+        if (!in_array($roleId, [1, 2, 3])) abort(422);
 
         $user = User::find($userId);
 
