@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -16,14 +17,62 @@ class AdminController extends Controller
     /**
      * Главная страница админ-панели
      *
+     * @param Request $request
      * @return View
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function index(): View
+    public function index(Request $request): View
     {
+        if ($request->method() === 'POST') return $this->usersSearch($request);
+
         return view('admin/index', [
             'users' => User::paginate(),
             'users_total' => User::count(),
             'workers_total' => User::where('role', '=', 2)->count(),
+            'roles' => [
+                1 => 'Инициатор',
+                2 => 'Исполнитель',
+                3 => 'Администратор'
+            ],
+        ]);
+    }
+
+    /**
+     * Поиск пользователей
+     *
+     * @param Request $request
+     * @return View|RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function usersSearch(Request $request)
+    {
+        $this->validate($request, [
+            'search' => 'required|string',
+            'role.*' => 'nullable|numeric|digits_between:1,3'
+        ]);
+
+        $roles = [1, 2, 3];
+        if ($request->role) $roles = array_values($request->role);
+
+        $search = $request->input('search');
+        $users = DB::table('users')
+            ->whereIn('role', $roles)
+            ->where(function($query) use($search) {
+                $query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->paginate();
+
+        // items as model (default array)
+        $users->getCollection()->transform(function ($user) {
+            return (new User())->fill((array) $user);
+        });
+
+        return view('admin/index', [
+            'users' => $users,
+            'users_total' => User::count(),
+            'workers_total' => User::where('role', '=', 2)->count(),
+            'search' => $search,
             'roles' => [
                 1 => 'Инициатор',
                 2 => 'Исполнитель',
@@ -89,50 +138,6 @@ class AdminController extends Controller
             ],
             'requests' => $requestsByPeriod,
             'active_requests' => $activeRequests
-        ]);
-    }
-
-    /**
-     * Поиск пользователей
-     *
-     * @param Request $request
-     * @return View
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function usersSearch(Request $request): View
-    {
-        $this->validate($request, [
-            'search' => 'required|string',
-            'role.*' => 'nullable|numeric|digits_between:1,3'
-        ]);
-
-        $roles = [1, 2, 3];
-        if ($request->role) $roles = array_values($request->role);
-
-        $search = $request->input('search');
-        $users = DB::table('users')
-            ->whereIn('role', $roles)
-            ->where(function($query) use($search) {
-                $query->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('email', 'LIKE', "%{$search}%");
-            })
-            ->paginate();
-
-        // items as model (default array)
-        $users->getCollection()->transform(function ($user) {
-            return (new User())->fill((array) $user);
-        });
-
-        return view('admin/index', [
-            'users' => $users,
-            'users_total' => User::count(),
-            'workers_total' => User::where('role', '=', 2)->count(),
-            'search' => $search,
-            'roles' => [
-                1 => 'Инициатор',
-                2 => 'Исполнитель',
-                3 => 'Администратор'
-            ],
         ]);
     }
 

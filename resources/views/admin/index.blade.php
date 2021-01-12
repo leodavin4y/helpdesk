@@ -30,7 +30,7 @@
 
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active px-3 pb-3 border border-top-0" id="users" role="tabpanel" aria-labelledby="users-tab">
-                        <form method="post" action="{{ route('admin.users.search') }}" class="pt-3">
+                        <form method="post" class="pt-3">
                             <label for="users_search">Поиск</label>
                             <div class="input-group mb-3">
                                 {{ csrf_field() }}
@@ -77,7 +77,7 @@
                                             </td>
                                             <td>
                                                 @if (in_array($user->role, [1, 2]))
-                                                    <a href="{{ route('dashboard.user', [$user->id]) }}"
+                                                    <a href="{{ route('admin.user', [$user->id]) }}"
                                                        class="btn btn-sm btn-link text-primary"
                                                        title="Отчёт"
                                                     >

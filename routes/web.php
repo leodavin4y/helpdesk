@@ -74,9 +74,7 @@ Route::middleware(['auth', 'can:worker'])->group(function () {
 });
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
-    Route::get('/admin', 'AdminController@index')->name('admin.index');
-
-    Route::post('/admin/users/search', 'AdminController@usersSearch')->name('admin.users.search');
+    Route::match(['GET', 'POST'], '/admin', 'AdminController@index')->name('admin.index');
 
     Route::post('/admin/users/{id}/delete', 'AdminController@usersDelete')
         ->where('id', '[0-9]+')
