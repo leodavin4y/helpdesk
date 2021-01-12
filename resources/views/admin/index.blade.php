@@ -42,6 +42,15 @@
                                     </button>
                                 </div>
                             </div>
+                            <div>
+                                <span class="mr-2">Роль:</span>
+                                @foreach ($roles as $id => $role)
+                                    <label>
+                                        <input type="checkbox" name="role[]" value="{{ $id }}" <?=request()->input('role') && in_array($id . '', request()->input('role')) ? 'checked' : ''?>>
+                                        {{ $role }}
+                                    </label>
+                                @endforeach
+                            </div>
                         </form>
 
                         <div class="small pb-1">Найдено: {{ $users->total() }} / Отображается: {{ $users->count() }}</div>

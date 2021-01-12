@@ -34,7 +34,15 @@
             <div class="col-12">
                 <div class="row mb-1">
                     <div class="col-auto">
-                        <div class="h5">Кол-во выполненных заявок за</div>
+                        <div class="h5">
+                            @if ($user->role === 1)
+                                История заявок за
+                            @elseif($user->role === 2)
+                                Кол-во выполненных заявок за
+                            @else
+                                Кол-во выполненных заявок за
+                            @endif
+                        </div>
                     </div>
                     <div class="col-auto">
                         <form method="post">

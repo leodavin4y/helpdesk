@@ -34,6 +34,9 @@
                 <th scope="col">Приоритет</th>
                 <th scope="col">Заголовок</th>
                 <th scope="col">Инициатор</th>
+                @if ($request_statuses['selected'] >= 2)
+                    <th scope="col">Исполнитель</th>
+                @endif
                 <th scope="col">Действие</th>
             </tr>
         </thead>
@@ -47,8 +50,13 @@
                         <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
                     </td>
                     <td>
-                        <a href="{{ route('admin.user', [$req->user->id]) }}">{{ $req->user->name }}</a>
+                        {{ $req->user->name }}
                     </td>
+                    @if ($request_statuses['selected'] >= 2)
+                        <td>
+                            <a href="{{ route('admin.user', [$req->worker->id]) }}">{{ $req->worker->name }}</a>
+                        </td>
+                    @endif
                     <td >
                         <button
                             type="button"

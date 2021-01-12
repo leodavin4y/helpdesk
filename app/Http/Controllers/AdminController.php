@@ -24,6 +24,11 @@ class AdminController extends Controller
             'users' => User::paginate(),
             'users_total' => User::count(),
             'workers_total' => User::where('role', '=', 2)->count(),
+            'roles' => [
+                1 => 'Инициатор',
+                2 => 'Исполнитель',
+                3 => 'Администратор'
+            ],
         ]);
     }
 
@@ -50,14 +55,30 @@ class AdminController extends Controller
         ]);
 
         $interval = $request->period ? $periods[$request->period] : $periods['week'];
-        $requestsByPeriod = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
-            ->where('requests.status_id', '=', 5)
-            ->where('requests.created_at', '>=', DB::raw('DATE_SUB(CURRENT_DATE, INTERVAL ' . $interval . ')'))
-            ->paginate();
-        $activeRequests = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
-            ->where('requests.worker_id', '=', $id)
-            ->whereIn('requests.status_id', [2, 3, 4])
-            ->count();
+
+        if ($user->role === 2) {
+            $requestsByPeriod = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
+                ->where('requests.worker_id', '=', $id)
+                ->where('requests.status_id', '=', 5)
+                ->where('requests.created_at', '>=', DB::raw('DATE_SUB(CURRENT_DATE, INTERVAL ' . $interval . ')'))
+                ->paginate();
+            $activeRequests = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
+                ->where('requests.worker_id', '=', $id)
+                ->whereIn('requests.status_id', [2, 3, 4])
+                ->count();
+        } elseif($user->role === 1) {
+            $requestsByPeriod = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
+                ->where('requests.user_id', '=', $user->id)
+                ->where('requests.created_at', '>=', DB::raw('DATE_SUB(CURRENT_DATE, INTERVAL ' . $interval . ')'))
+                ->paginate();
+            $activeRequests = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
+                ->where('requests.user_id', '=', $user->id)
+                ->whereIn('requests.status_id', [2, 3, 4])
+                ->count();
+        } else {
+            $requestsByPeriod = 0;
+            $activeRequests = 0;
+        }
 
         return view('admin/user', [
             'user' => $user,
@@ -81,13 +102,20 @@ class AdminController extends Controller
     public function usersSearch(Request $request): View
     {
         $this->validate($request, [
-            'search' => 'required|string'
+            'search' => 'required|string',
+            'role.*' => 'nullable|numeric|digits_between:1,3'
         ]);
+
+        $roles = [1, 2, 3];
+        if ($request->role) $roles = array_values($request->role);
 
         $search = $request->input('search');
         $users = DB::table('users')
-            ->where('name', 'LIKE', "%{$search}%")
-            ->orWhere('email', 'LIKE', "%{$search}%")
+            ->whereIn('role', $roles)
+            ->where(function($query) use($search) {
+                $query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            })
             ->paginate();
 
         // items as model (default array)
@@ -99,7 +127,12 @@ class AdminController extends Controller
             'users' => $users,
             'users_total' => User::count(),
             'workers_total' => User::where('role', '=', 2)->count(),
-            'search' => $search
+            'search' => $search,
+            'roles' => [
+                1 => 'Инициатор',
+                2 => 'Исполнитель',
+                3 => 'Администратор'
+            ],
         ]);
     }
 
