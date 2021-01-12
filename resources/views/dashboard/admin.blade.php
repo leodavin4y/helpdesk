@@ -46,7 +46,9 @@
                     <td>
                         <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
                     </td>
-                    <td>{{ $req->user->name }}</td>
+                    <td>
+                        <a href="{{ route('admin.user', [$req->user->id]) }}">{{ $req->user->name }}</a>
+                    </td>
                     <td >
                         <button
                             type="button"

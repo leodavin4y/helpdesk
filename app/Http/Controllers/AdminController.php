@@ -8,18 +8,77 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Models\User;
+use App\Models\Request as Req;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
+    /**
+     * Главная страница админ-панели
+     *
+     * @return View
+     */
     public function index(): View
     {
         return view('admin/index', [
             'users' => User::paginate(),
-            'users_total' => User::count()
+            'users_total' => User::count(),
+            'workers_total' => User::where('role', '=', 2)->count(),
         ]);
     }
 
-    public function usersSearch(Request $request)
+    /**
+     * Страница статистики по конкретному пользователю
+     *
+     * @param Request $request
+     * @param int $id - ид пользователя
+     * @return View
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function user(Request $request, int $id): View
+    {
+        $user = User::find($id);
+        if (!$user) abort(404);
+
+        $periods = [
+            'week' => '7 DAY',
+            'month' => '1 MONTH',
+            'year' => '1 YEAR'
+        ];
+        $this->validate($request, [
+            'period' => ['nullable', 'string', Rule::in(array_keys($periods))]
+        ]);
+
+        $interval = $request->period ? $periods[$request->period] : $periods['week'];
+        $requestsByPeriod = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
+            ->where('requests.status_id', '=', 5)
+            ->where('requests.created_at', '>=', DB::raw('DATE_SUB(CURRENT_DATE, INTERVAL ' . $interval . ')'))
+            ->paginate();
+        $activeRequests = Req::join('request_statuses', 'requests.status_id', '=', 'request_statuses.id')
+            ->where('requests.worker_id', '=', $id)
+            ->whereIn('requests.status_id', [2, 3, 4])
+            ->count();
+
+        return view('admin/user', [
+            'user' => $user,
+            'periods' => [
+                'week' => 'Последние 7 дней',
+                'month' => 'Последний месяц',
+                'year' => 'Последний год'
+            ],
+            'requests' => $requestsByPeriod,
+            'active_requests' => $activeRequests
+        ]);
+    }
+
+    /**
+     * Поиск пользователей
+     *
+     * @param Request $request
+     * @return View
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function usersSearch(Request $request): View
     {
         $this->validate($request, [
             'search' => 'required|string'
@@ -39,10 +98,19 @@ class AdminController extends Controller
         return view('admin/index', [
             'users' => $users,
             'users_total' => User::count(),
+            'workers_total' => User::where('role', '=', 2)->count(),
             'search' => $search
         ]);
     }
 
+    /**
+     * Изменить профиль пользователя
+     *
+     * @param Request $request
+     * @param int $userId
+     * @return JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function usersEdit(Request $request, int $userId)
     {
         $this->validate($request, [
@@ -68,6 +136,12 @@ class AdminController extends Controller
         ]);
     }
 
+    /**
+     * Удалить профиль пользователя
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
     public function usersDelete(int $id)
     {
         $user = User::find($id);

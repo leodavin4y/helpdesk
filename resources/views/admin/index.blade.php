@@ -20,6 +20,12 @@
                             <span class="badge badge-dark rounded-pill px-2">{{ $users_total }}</span>
                         </a>
                     </li>
+                    {{--<li class="nav-item">
+                        <a class="nav-link" href="#workers" data-toggle="tab" aria-controls="workers" aria-selected="true">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i> Отчет исполнители
+                            <span class="badge badge-dark rounded-pill px-2">{{ $workers_total }}</span>
+                        </a>
+                    </li>--}}
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
@@ -61,21 +67,31 @@
                                                 <span class="small">{{ $user->getRoleName() }}</span>
                                             </td>
                                             <td>
+                                                @if (in_array($user->role, [1, 2]))
+                                                    <a href="{{ route('dashboard.user', [$user->id]) }}"
+                                                       class="btn btn-sm btn-link text-primary"
+                                                       title="Отчёт"
+                                                    >
+                                                        <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                                                    </a>
+                                                @endif
                                                 <button
                                                     type="button"
                                                     class="btn btn-sm btn-link text-primary"
                                                     data-toggle="modal"
                                                     data-target="#editProfileModal"
                                                     onclick="editProfile({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', {{ $user->role }})"
+                                                    title="Редактировать учетную запись"
                                                 >
-                                                    Изменить
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                                 </button>
                                                 <button
                                                     type="button"
                                                     class="btn btn-sm btn-link text-danger"
                                                     onclick="userDelete({{ $user->id }})"
+                                                    title="Удалить учетную запись"
                                                 >
-                                                    Удалить
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -86,6 +102,77 @@
                             {{ $users->links() }}
                         @endif
                     </div>
+
+                    {{--<div class="tab-pane fade show px-3 pb-3 border border-top-0" id="workers" role="tabpanel" aria-labelledby="workers-tab">
+                        <form method="post" action="{{ route('admin.users.search') }}" class="pt-3">
+                            <label for="users_search">Поиск</label>
+                            <div class="input-group mb-3">
+                                {{ csrf_field() }}
+                                <input type="text" name="search" value="{{ $search ?? '' }}" id="users_search" class="form-control" placeholder="Введите имя или почтовый адрес" required>
+
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-sm btn-light input-group-text">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="small pb-1">Найдено: {{ $users->total() }} / Отображается: {{ $users->count() }}</div>
+
+                        @isset($users)
+                            <table class="table table-responsive-md table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Имя</th>
+                                        <th scope="col">Почта</th>
+                                        <th scope="col">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($users as $user)
+                                        <tr>
+                                            <th scope="row">{{ $user->id }}</th>
+                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>
+                                                <button
+                                                        type="button"
+                                                        class="btn btn-sm btn-link text-primary"
+                                                        data-toggle="modal"
+                                                        data-target="#editProfileModal"
+                                                        onclick="editProfile({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', {{ $user->role }})"
+                                                >
+                                                    Изменить
+                                                </button>
+                                                <button
+                                                        type="button"
+                                                        class="btn btn-sm btn-link text-danger"
+                                                        onclick="userDelete({{ $user->id }})"
+                                                >
+                                                    Удалить
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+
+                            <div class="clearfix">
+                                {{ $users->links() }}
+
+                                <div class="alert alert-light border alert-dismissible small d-inline-block float-right mb-0">
+                                    <i class="fa fa-info mr-2" aria-hidden="true"></i>
+                                    Кол-во выполненных заявок за период
+
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
+                    </div>--}}
                 </div>
             </div>
         </div>
