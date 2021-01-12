@@ -40,4 +40,9 @@ class Request extends Model
     {
         return $this->hasOne('App\Models\User', 'id', 'user_id');
     }
+
+    public function worker()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'worker_id');
+    }
 }
