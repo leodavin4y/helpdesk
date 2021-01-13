@@ -59,6 +59,6 @@ class User extends Authenticatable
 
     public function getRoleName()
     {
-        return ['Пользователь', 'Исполнитель', 'Администратор'][$this->role - 1];
+        return ['Пользователь', 'Исполнитель', 'Администратор'][$this->role - 1] ?? null;
     }
 }

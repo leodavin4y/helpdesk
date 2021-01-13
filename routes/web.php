@@ -74,9 +74,7 @@ Route::middleware(['auth', 'can:worker'])->group(function () {
 });
 
 Route::middleware(['auth', 'can:admin'])->group(function () {
-    Route::get('/admin', 'AdminController@index')->name('admin.index');
-
-    Route::post('/admin/users/search', 'AdminController@usersSearch')->name('admin.users.search');
+    Route::match(['GET', 'POST'], '/admin', 'AdminController@index')->name('admin.index');
 
     Route::post('/admin/users/{id}/delete', 'AdminController@usersDelete')
         ->where('id', '[0-9]+')
@@ -85,6 +83,10 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::post('/admin/users/{id}/edit', 'AdminController@usersEdit')
         ->where('id', '[0-9]+')
         ->name('admin.users.edit');
+
+    Route::match(['GET', 'POST'], '/admin/users/{id}/', 'AdminController@user')
+        ->where('id', '[0-9]+')
+        ->name('admin.user');
 
     Route::get('/faq/store', 'FaqController@store')->name('faq.store');
     Route::post('/faq/store', 'FaqController@storeFAQ');
