@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use App\Models\Request;
 
 class RequestStatus extends Model
@@ -33,5 +32,18 @@ class RequestStatus extends Model
     public function getCounter(): int
     {
         return Request::where('status_id', '=', $this->id)->count();
+    }
+
+    /**
+     * Возвращает суммарное кол-во заявок для исполнителя с таким статусом
+     *
+     * @param int $workerId - код исполнителя
+     * @return int
+     */
+    public function getCounterByWorker(int $workerId): int
+    {
+        return Request::where('status_id', '=', $this->id)
+            ->where('worker_id', '=', $workerId)
+            ->count();
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -82,12 +83,13 @@ class DashboardController extends Controller
 
         $user = Auth::user();
         $status = session('status_id', 1);
-        $requests = Req::where([
-            ['status_id', '=', $status],
-            ['worker_id', '=', $user->id]
-        ])->with('user')->paginate();
+        $requests = Req::where('status_id', '=', $status)
+            ->where('worker_id', '=', $user->id)
+            ->with('user')
+            ->paginate();
 
         return view('dashboard/index', [
+            'user' => $user,
             'request' => $this->getRequestFormData(),
             'requests' => $requests,
             'request_statuses' => [

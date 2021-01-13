@@ -1,7 +1,14 @@
 <ul class="nav nav-tabs mt-3">
     @foreach($tabs as $tab)
         <li class="nav-item">
-            <a class="nav-link{{ $active_tab == $tab['id'] ? ' active' : '' }}" href="?status={{ $tab['id'] }}">{{ $tab['name'] }}</a>
+            <a class="nav-link{{ $active_tab == $tab['id'] ? ' active' : '' }}" href="?status={{ $tab['id'] }}">
+                {{ $tab['name'] }}
+                @foreach ($request_statuses['statuses'] as $s)
+                    @if ($s->id === $tab['id'])
+                        ({{ $s->getCounterByWorker($user->id) }})
+                    @endif
+                @endforeach
+            </a>
         </li>
     @endforeach
 </ul>
