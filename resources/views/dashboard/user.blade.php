@@ -14,6 +14,7 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">Дата создания</th>
                     <th scope="col">Категория</th>
                     <th scope="col">Приоритет</th>
                     <th scope="col">Заголовок</th>
@@ -24,6 +25,7 @@
                 @foreach($requests as $req)
                     <tr id="req{{ $req->id }}">
                         <th scope="row">{{ $req->id }}</th>
+                        <td>{{ $req->created_at }}</td>
                         <td>{{ $req->category->name }}</td>
                         <td>{{ $req->priority->name }}</td>
                         <td>
