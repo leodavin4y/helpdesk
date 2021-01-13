@@ -54,7 +54,8 @@ class DashboardController extends Controller
 
         $user = Auth::user();
         $status = session('status_id', 1);
-        $requests = Req::where('status_id', '=', $status)
+        $statuses = $status ? [1, 2, 3] : [4, 5];
+        $requests = Req::whereIn('status_id', $statuses)
             ->where('user_id', '=', $user->id)
             ->orderBy('id', 'DESC')
             ->paginate();
@@ -67,11 +68,8 @@ class DashboardController extends Controller
                 'selected' => $status
             ],
             'tabs' => [
-                ['id' => 1, 'name' => 'Новые'],
-                ['id' => 2, 'name' => 'Исполнение'],
-                ['id' => 3, 'name' => 'Ожидают проверки'],
-                ['id' => 4, 'name' => 'Решенные'],
-                ['id' => 5, 'name' => 'Закрытые'],
+                ['id' => 1, 'name' => 'Активные заявки'],
+                ['id' => 0, 'name' => 'Завершенные'],
             ],
             'active_tab' => $status,
         ]);
