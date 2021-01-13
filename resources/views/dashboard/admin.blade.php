@@ -13,11 +13,9 @@
                     <div class="col-auto pl-0">
                         <select name="status" class="form-control form-control-sm" id="requests_status" onchange="$('#statusForm').submit()">
                             @foreach ($request_statuses['statuses'] as $status)
-                                @if ($status->id == $request_statuses['selected'])
-                                    <option value="{{ $status->id }}" selected>{{ $status->name }}</option>
-                                @else
-                                    <option value="{{ $status->id }}">{{ $status->name }}</option>
-                                @endif
+                                <option value="{{ $status->id }}" <?=$status->id == $request_statuses['selected'] ? 'selected' : ''?>>
+                                    {{ $status->name }} ({{ $status->getCounter() }})
+                                </option>
                             @endforeach
                         </select>
                     </div>

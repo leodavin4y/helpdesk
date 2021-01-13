@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use App\Models\Request;
 
 class RequestStatus extends Model
 {
@@ -23,4 +25,13 @@ class RequestStatus extends Model
      */
     protected $hidden = [];
 
+    /**
+     * Возвращает суммарное кол-во заявок с таким статусом
+     *
+     * @return int
+     */
+    public function getCounter(): int
+    {
+        return Request::where('status_id', '=', $this->id)->count();
+    }
 }
