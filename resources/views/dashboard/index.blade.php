@@ -79,7 +79,7 @@
 
                     <div class="form-group">
                         <label for="modal_status">Cтатус заявки</label>
-                        <select name="status" id="modal_status" class="form-control">
+                        <select name="status_id" id="modal_status" class="form-control">
                             @foreach ($request_statuses['statuses'] as $status)
                                 @if ($status->id == $request_statuses['selected'])
                                     <option value="{{ $status->id }}" selected>{{ $status->name }}</option>
@@ -198,7 +198,7 @@
 
         function setWorker()
         {
-            const select = $('<select class="form-control" name="worker" id="workers"></select>');
+            const select = $('<select class="form-control" name="worker_id" id="workers"></select>');
             const wrap = $('<div class="form-group">' +
                 '<label>Исполнитель</label>' +
               '</div>'

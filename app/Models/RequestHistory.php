@@ -14,7 +14,7 @@ class RequestHistory extends Model
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['request_id', 'user_id', 'status_id'];
 
     /**
      * The attributes that should be hidden for arrays.

@@ -11,13 +11,28 @@ use App\Models\User;
 use App\Models\RequestStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\Interfaces\RequestRepositoryInterface;
 
 class DashboardController extends Controller
 {
+    /**
+     * @var RequestRepositoryInterface
+     */
+    private $requestRepository;
+
+    /**
+     * DashboardController constructor.
+     * @param RequestRepositoryInterface $requestRepository
+     */
+    public function __construct(RequestRepositoryInterface $requestRepository)
+    {
+        $this->requestRepository = $requestRepository;
+    }
+
     public function index(): RedirectResponse
     {
         $role = Auth::user()->role;
@@ -174,35 +189,17 @@ class DashboardController extends Controller
     public function updateStatus(Request $request, int $id)
     {
         $this->validate($request, [
-            'status' => 'required|integer|exists:App\Models\RequestStatus,id',
-            'worker' => 'nullable|integer|exists:App\Models\User,id'
+            'status_id' => 'required|integer|exists:App\Models\RequestStatus,id',
+            'worker_id' => 'nullable|integer|exists:App\Models\User,id'
         ]);
 
         try {
-            $req = Req::find($id);
-            $statusId = $request->status;
-            $workerId = $request->worker;
-
-            if (!$req) throw new \Exception('Заявка не существует');
-
-            DB::transaction(function() use($req, $statusId, $workerId) {
-                if (!is_null($workerId)) {
-                    $req->status_id = 2;
-                    $req->worker_id = $workerId;
-                } else {
-                    $req->status_id = $statusId;
-                }
-
-                if (!$req->save()) throw new \Exception('Не удалось сохранить');
-
-                $user = Auth::user();
-                $history = new RequestHistory();
-                $history->user_id = $user->id;
-                $history->status_id = $req->status_id;
-
-                if (!$history->save()) throw new \Exception('Не удалось сохранить');
-            });
-
+            $workerId = $request->worker_id;
+            $statusId = !is_null($workerId) ? 2 : $request->status_id;
+            $this->requestRepository->updateWithHistory($id, [
+                'status_id' => $statusId,
+                'worker_id' => $workerId
+            ]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -212,13 +209,8 @@ class DashboardController extends Controller
 
     public function workerDone(int $id)
     {
-        $req = Req::find($id);
-
-        if (!$req) return back()->with('error', "Заявка #{$id} не существует");
-
         try {
-            $req->status_id = 3;
-            $req->save();
+            $this->requestRepository->updateWithHistory($id, ['status_id' => 3]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -228,13 +220,8 @@ class DashboardController extends Controller
 
     public function initiatorSolved(int $id)
     {
-        $req = Req::find($id);
-
-        if (!$req) return back()->with('error', "Заявка #{$id} не существует");
-
         try {
-            $req->status_id = 4;
-            $req->save();
+            $this->requestRepository->updateWithHistory($id, ['status_id' => 4]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -259,9 +246,14 @@ class DashboardController extends Controller
             ->orderBy('id', 'DESC')
             ->paginate(30);
 
+        $notifications = RequestHistory::where('request_id', '=', $id)
+            ->orderBy('id', 'DESC')
+            ->get();
+
         return view('dashboard/request', [
             'request' => $req,
-            'messages' => $messages
+            'messages' => $messages,
+            'notifications' => $notifications
         ]);
     }
 

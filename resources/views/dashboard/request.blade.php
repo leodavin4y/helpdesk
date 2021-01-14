@@ -31,36 +31,74 @@
         @endif
 
         <div class="chat mt-5">
-            <div class="pb-3">Сообщения:</div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#msg" data-toggle="tab">
+                        Сообщения
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#notify" data-toggle="tab">
+                        События
+                    </a>
+                </li>
+            </ul>
 
-            @if (count($messages) === 0)
-                <div class="alert alert-info">
-                    История сообщений пуста
+            <div class="tab-content mb-2" id="myTabContent">
+                <div class="tab-pane fade show active px-3 pb-3 border border-top-0" role="tabpanel" id="msg">
+                    <div class="pt-3">
+                        @if (count($messages) === 0)
+                            <div class="alert alert-info mb-0">
+                                История сообщений пуста
+                            </div>
+                        @else
+                            <div class="chat__history mb-1" style="max-height: 45vh; overflow-y: auto;">
+                                @foreach($messages as $msg)
+                                    <div class="card p-2 mb-2">
+                                        <div class="h6">{{ $msg->user->name }}</div>
+
+                                        <div>
+                                            {{ $msg->text }}
+                                        </div>
+
+                                        <div>
+                                            <span class="small pr-2">{{ date('Y-m-d, H:i', strtotime($msg->created_at)) }}</span>
+                                            <a href="{{ route('dashboard.request.message.delete', [$msg->id]) }}" class="small">Удалить</a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        @if ($messages->hasPages())
+                            <div class="my-2">
+                                {{ $messages->links() }}
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            @else
-                <div class="chat__history mb-1" style="max-height: 45vh; overflow-y: auto;">
-                    @foreach($messages as $msg)
-                        <div class="card p-2 mb-2">
-                            <div class="h6">{{ $msg->user->name }}</div>
 
-                            <div>
-                                {{ $msg->text }}
-                            </div>
+                <div class="tab-pane fade show px-3 pb-3 border border-top-0" role="tabpanel" id="notify">
+                    <div class="pt-3">
+                        <div class="chat__history mb-1" style="max-height: 45vh; overflow-y: auto;">
+                            @foreach($notifications as $notify)
+                                <div class="card p-2 mb-2">
+                                    <div class="h6">
+                                        {{ $notify->user->getRoleName() }} {{ $notify->user->name }} изменил статус заявки на "{{ $notify->status->name }}"
+                                    </div>
 
-                            <div>
-                                <span class="small pr-2">{{ date('Y-m-d, H:i', strtotime($msg->created_at)) }}</span>
-                                <a href="{{ route('dashboard.request.message.delete', [$msg->id]) }}" class="small">Удалить</a>
-                            </div>
+                                    <div>
+                                        <span class="small pr-2">
+                                            {{ date('Y-m-d, H:i', strtotime($notify->created_at)) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                    </div>
                 </div>
-            @endif
+            </div>
 
-            @if ($messages->hasPages())
-                <div class="my-2">
-                    {{ $messages->links() }}
-                </div>
-            @endif
 
             <div class="chat__form border rounded p-3">
                 <form method="post" action="{{ route('dashboard.messages.new', [$request->id]) }}">

@@ -16,6 +16,9 @@ class CreateRequestHistory extends Migration
         Schema::create('request_history', function (Blueprint $table) {
             $table->id();
 
+            $table->bigInteger('request_id', false, true);
+            $table->foreign('request_id')->references('id')->on('requests');
+
             $table->bigInteger('user_id', false, true);
             $table->foreign('user_id')->references('id')->on('users');
 

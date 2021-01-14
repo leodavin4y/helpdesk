@@ -12,7 +12,9 @@ class Request extends Model
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['category_id', 'priority_id', 'title', 'description', 'status_id', 'worker_id', 'user_id'];
+
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be hidden for arrays.
