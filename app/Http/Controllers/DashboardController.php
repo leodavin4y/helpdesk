@@ -70,7 +70,12 @@ class DashboardController extends Controller
 
         $user = Auth::user();
         $status = session('status_id', 1);
-        $statuses = $status ? [1, 2, 3] : [4, 5];
+        $activeIds = [1, 2, 3];
+        $inactiveIds = [4, 5];
+        $statuses = $status ? $activeIds : $inactiveIds;
+        $counter = Req::whereIn('status_id', !$status ? $activeIds : $inactiveIds)
+            ->where('user_id', '=', $user->id)
+            ->count();
         $requests = Req::whereIn('status_id', $statuses)
             ->where('user_id', '=', $user->id)
             ->orderBy('id', 'DESC')
@@ -88,6 +93,7 @@ class DashboardController extends Controller
                 ['id' => 0, 'name' => 'Завершенные'],
             ],
             'active_tab' => $status,
+            'counter' => $counter
         ]);
     }
 

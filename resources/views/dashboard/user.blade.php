@@ -1,7 +1,9 @@
 <ul class="nav nav-tabs mt-3">
     @foreach($tabs as $tab)
         <li class="nav-item">
-            <a class="nav-link{{ $active_tab == $tab['id'] ? ' active' : '' }}" href="?status={{ $tab['id'] }}">{{ $tab['name'] }}</a>
+            <a class="nav-link{{ $active_tab == $tab['id'] ? ' active' : '' }}" href="?status={{ $tab['id'] }}">
+                {{ $tab['name'] }} (<?=$active_tab == $tab['id'] ? $requests->total() : $counter ?>)
+            </a>
         </li>
     @endforeach
 </ul>
@@ -30,7 +32,7 @@
                             {{ $req->status->name }}
                         </td>
                         <td>{{ $req->created_at }}</td>
-                        <td>{{ $req->category->name }}</td>
+                        <td>{{ $req->category->parent->name }}</td>
                         <td>{{ $req->priority->name }}</td>
                         <td>
                             <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
