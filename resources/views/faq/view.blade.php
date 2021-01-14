@@ -23,7 +23,7 @@
 
         <div class="row">
             <div class="col-12">
-                <div class="border px-3 rounded shadow-sm">
+                <div class="border px-3 py-2 rounded shadow-sm">
                     <h2 class="h4 py-3">{{ $faq->title }}</h2>
 
                     {!! $faq->text !!}

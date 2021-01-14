@@ -116,8 +116,10 @@ class FaqController extends Controller {
         try {
             if (is_null($faq)) $faq = new FAQ();
 
+            $onlyText = html_entity_decode(strip_tags($request->text), ENT_QUOTES);
             $faq->title = $request->title;
             $faq->text = $request->text;
+            $faq->annotation = mb_substr($onlyText, 0, 512, 'UTF-8');
 
             if (!$faq->save()) throw new \Exception('Failed to store FAQ');
 

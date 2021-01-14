@@ -84,7 +84,7 @@
                             </div>
 
                             <div class="card-text text-overflow mb-2">
-                                {!! $faq->text !!}
+                                {{ $faq->annotation }}
                             </div>
 
                             <a href="{{ route('faq.view', [$faq->id]) }}" class="btn btn-primary">Детальнее</a>
