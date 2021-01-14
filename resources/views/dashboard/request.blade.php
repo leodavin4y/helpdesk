@@ -12,7 +12,9 @@
         <h1 class="h5 pt-3">Заявка #{{ $request->id }}</h1>
         <h2 class="h5 pb-3">{{ $request->title }}</h2>
         <div>Инициатор: {{ $request->user->name }}</div>
-        <div>Исполнитель: {{ $request->worker->name }}</div>
+        @if ($request->worker)
+            <div>Исполнитель: {{ $request->worker->name }}</div>
+        @endif
         <div>Статус: {{ $request->status->name }}</div>
         <p>Описание: {{ $request->description }}</p>
 
