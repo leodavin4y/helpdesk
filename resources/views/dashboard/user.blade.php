@@ -27,7 +27,7 @@
                     <tr id="req{{ $req->id }}">
                         <th scope="row">{{ $req->id }}</th>
                         <td class="status{{ $req->status->id }}">
-                            {!! str_replace(' ', '<br>', $req->status->name) !!}
+                            {{ $req->status->name }}
                         </td>
                         <td>{{ $req->created_at }}</td>
                         <td>{{ $req->category->name }}</td>
