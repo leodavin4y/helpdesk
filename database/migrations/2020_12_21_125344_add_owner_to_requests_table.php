@@ -14,7 +14,7 @@ class AddOwnerToRequestsTable extends Migration
     public function up()
     {
         Schema::table('requests', function (Blueprint $table) {
-            $table->bigInteger('user_id', false, true)->after('project_id');
+            $table->bigInteger('user_id', false, true)->after('worker_id');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
