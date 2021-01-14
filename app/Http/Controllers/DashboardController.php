@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Message;
 use App\Models\Priority;
 use App\Models\Request as Req;
+use App\Models\RequestHistory;
 use App\Models\User;
 use App\Models\RequestStatus;
 use Illuminate\Http\JsonResponse;
@@ -179,17 +180,29 @@ class DashboardController extends Controller
 
         try {
             $req = Req::find($id);
+            $statusId = $request->status;
+            $workerId = $request->worker;
 
             if (!$req) throw new \Exception('Заявка не существует');
 
-            if (!is_null($request->worker)) {
-                $req->status_id = 2;
-                $req->worker_id = $request->worker;
-            } else {
-                $req->status_id = $request->status;
-            }
+            DB::transaction(function() use($req, $statusId, $workerId) {
+                if (!is_null($workerId)) {
+                    $req->status_id = 2;
+                    $req->worker_id = $workerId;
+                } else {
+                    $req->status_id = $statusId;
+                }
 
-            if (!$req->save()) throw new \Exception('Не удалось сохранить');
+                if (!$req->save()) throw new \Exception('Не удалось сохранить');
+
+                $user = Auth::user();
+                $history = new RequestHistory();
+                $history->user_id = $user->id;
+                $history->status_id = $req->status_id;
+
+                if (!$history->save()) throw new \Exception('Не удалось сохранить');
+            });
+
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
