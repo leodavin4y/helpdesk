@@ -26,7 +26,7 @@
                 @foreach($requests as $req)
                     <tr id="req{{ $req->id }}">
                         <th scope="row">{{ $req->id }}</th>
-                        <td>
+                        <td class="status{{ $req->status->id }}">
                             {!! str_replace(' ', '<br>', $req->status->name) !!}
                         </td>
                         <td>{{ $req->created_at }}</td>

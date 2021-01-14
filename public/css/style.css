@@ -12,3 +12,17 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+table button {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+/* Статусы */
+.status1 {
+    background-color: #f5c6cc;
+}
+.status2 {
+    background-color: #b8daff;
+}
+.status3 {
+    background-color: #c3e5ca;
+}
