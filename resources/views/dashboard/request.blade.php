@@ -33,19 +33,46 @@
         <div class="chat mt-5">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#msg" data-toggle="tab">
-                        Сообщения
+                    <a class="nav-link active" href="#notify" data-toggle="tab">
+                        События ({{ count($notifications) }})
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="#notify" data-toggle="tab">
-                        События
+                    <a class="nav-link" href="#msg" data-chat="true" data-toggle="tab">
+                        Сообщения ({{ $messages->total() }})
                     </a>
                 </li>
             </ul>
 
             <div class="tab-content mb-2" id="myTabContent">
-                <div class="tab-pane fade show active px-3 pb-3 border border-top-0" role="tabpanel" id="msg">
+                <div class="tab-pane fade show active px-3 pb-3 border border-top-0" role="tabpanel" id="notify">
+                    <div class="pt-3">
+                        <div class="chat__history mb-1" style="max-height: 45vh; overflow-y: auto;">
+                            @if (count($notifications) === 0)
+                                <div class="alert alert-info mb-0">
+                                    История событий пуста
+                                </div>
+                            @else
+                                @foreach($notifications as $notify)
+                                    <div class="card p-2 mb-2">
+                                        <div class="h6">
+                                            {{ $notify->user->getRoleName() }} {{ $notify->user->name }} изменил статус заявки на "{{ $notify->status->name }}"
+                                        </div>
+
+                                        <div>
+                                            <span class="small pr-2">
+                                                {{ date('Y-m-d, H:i', strtotime($notify->created_at)) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade show px-3 pb-3 border border-top-0" role="tabpanel" id="msg">
                     <div class="pt-3">
                         @if (count($messages) === 0)
                             <div class="alert alert-info mb-0">
@@ -77,30 +104,9 @@
                         @endif
                     </div>
                 </div>
-
-                <div class="tab-pane fade show px-3 pb-3 border border-top-0" role="tabpanel" id="notify">
-                    <div class="pt-3">
-                        <div class="chat__history mb-1" style="max-height: 45vh; overflow-y: auto;">
-                            @foreach($notifications as $notify)
-                                <div class="card p-2 mb-2">
-                                    <div class="h6">
-                                        {{ $notify->user->getRoleName() }} {{ $notify->user->name }} изменил статус заявки на "{{ $notify->status->name }}"
-                                    </div>
-
-                                    <div>
-                                        <span class="small pr-2">
-                                            {{ date('Y-m-d, H:i', strtotime($notify->created_at)) }}
-                                        </span>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
             </div>
 
-
-            <div class="chat__form border rounded p-3">
+            <div class="chat__form border rounded p-3" style="display: none">
                 <form method="post" action="{{ route('dashboard.messages.new', [$request->id]) }}">
                     {{ csrf_field() }}
 
@@ -113,4 +119,16 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('bodyEnd')
+    <script>
+        window.addEventListener('load', () => {
+            const chat = $('.chat__form');
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', e => {
+                $(e.target).attr('data-chat') ? chat.fadeIn(300) : chat.fadeOut(300);
+            })
+        });
+    </script>
 @endsection
