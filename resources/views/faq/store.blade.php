@@ -59,6 +59,25 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="faq_category">Категория</label>
+                            <select name="category_id" id="faq_category" class="form-control">
+                                <option>[Без категории]</option>
+                                @foreach ($categories['parent'] as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="subcategory form-group">
+                            <label for="category">Подкатегория</label>
+                            <select name="subcategory_id" id="category" class="form-control">
+                                @foreach ($categories['sub'] as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label for="faq_text">Текст</label>
                             <textarea id="faq_text" name="text" class="form-control" placeholder="Текст заметки">
                                 {{ $faq->text }}
@@ -75,6 +94,25 @@
                         <div class="form-group">
                             <label for="faq_title">Заголовок</label>
                             <input type="text" id="faq_title" name="title" class="form-control" placeholder="Заголовок заметки" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="faq_category">Категория</label>
+                            <select name="category_id" id="faq_category" class="form-control">
+                                <option>[Без категории]</option>
+                                @foreach ($categories['parent'] as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="subcategory form-group">
+                            <label for="category">Подкатегория</label>
+                            <select name="subcategory_id" id="category" class="form-control">
+                                @foreach ($categories['sub'] as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="form-group">
@@ -100,5 +138,52 @@
             plugins: 'advlist link image lists table wordcount fullscreen emoticons searchreplace',
             toolbar: 'undo redo | styleselect | bold italic | bullist numlist | alignleft aligncenter alignright alignjustify | outdent indent',
         });
+    </script>
+    <script>
+        const subCategories = JSON.parse('@json($categories['sub'])');
+
+        @if (isset($faq))
+            window.addEventListener('load', () => {edit(JSON.parse('@json($faq->category)'))});
+        @endif
+
+        window.addEventListener('load', () => {
+            const catSelect = $('select[name="category_id"]');
+            const subCategoryDraw = () => {
+                const catId = Number(catSelect.val());
+                const subSelect = $('select[name="subcategory_id"]');
+                const subSelectWrap = subSelect.parent();
+                let subExist = false;
+
+                subSelect.empty();
+
+                subCategories.forEach(sub => {
+                    if (sub.parent_id === catId) {
+                        subExist = true;
+                        subSelect.append($(`<option value="${sub.id}">${sub.name}</option>`))
+                    }
+                });
+
+                subExist ? subSelectWrap.removeClass('d-none') : subSelectWrap.addClass('d-none');
+            };
+
+            subCategoryDraw();
+            catSelect.on('change', subCategoryDraw);
+        });
+
+        function edit(reqCategory) {
+            // set category
+            reqCategory.parent ?
+                $('select[name="category_id"]').val(reqCategory.parent.id.toString()) :
+                $('select[name="category_id"]').val(reqCategory.id.toString());
+
+            // set sub category
+            if (reqCategory.parent) {
+                $('select[name="subcategory_id"]').append($(`<option value="${reqCategory.id}" selected>${reqCategory.name}</option>`));
+                $('.subcategory').removeClass('d-none');
+            } else {
+                $('select[name="subcategory_id"]').empty();
+                $('.subcategory').addClass('d-none');
+            }
+        }
     </script>
 @endsection

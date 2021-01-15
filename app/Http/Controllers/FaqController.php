@@ -2,24 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use App\Models\Faq;
+use Illuminate\Support\Facades\DB;
 
 class FaqController extends Controller {
 
     /**
      * Список заметок с разбивкой на страницы
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @throws \Illuminate\Validation\ValidationException
+     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request): View
     {
-        $results = Faq::paginate();
+        $this->validate($request, [
+            'c' => 'nullable|integer|min:1|Exists:App\Models\Category,id'
+        ]);
+
+        $selectedCategory = !is_null($request->c) ? Category::find($request->c) : null;
+        $results = !is_null($request->c) ? $selectedCategory->getFaqsByCategoryWithPaginate() : Faq::paginate();
 
         return view('faq/index', [
-            'results' => $results
+            'results' => $results,
+            'parent_categories' => Category::whereNull('parent_id')->get(),
+            'selected_category' => $selectedCategory
         ]);
     }
 
@@ -68,7 +80,12 @@ class FaqController extends Controller {
      */
     public function store(): View
     {
-        return view('faq/store');
+        return view('faq/store', [
+            'categories' => [
+                'parent' => Category::whereNull('parent_id')->get(),
+                'sub' => Category::whereNotNull('parent_id')->get()
+            ]
+        ]);
     }
 
     /**
@@ -87,7 +104,11 @@ class FaqController extends Controller {
         if ($request->method() === 'POST') return $this->storeFAQ($request, $faq);
 
         return view('faq/store', [
-            'faq' => $faq
+            'faq' => $faq,
+            'categories' => [
+                'parent' => Category::whereNull('parent_id')->get(),
+                'sub' => Category::whereNotNull('parent_id')->get()
+            ]
         ]);
     }
 
@@ -104,6 +125,8 @@ class FaqController extends Controller {
         $this->validate($request, [
             'title' => 'required|string|min:2|max:255',
             'text' => 'required|string|min:10|max:65535',
+            'category_id' => 'nullable|integer|exists:App\Models\Category,id',
+            'subcategory_id' => 'nullable|integer|exists:App\Models\Category,id',
         ], [
             'title.required' => 'Поле "Заголовок" является обязательным',
             'text.required' => 'Поле "Текст" является обязательным',
@@ -114,19 +137,38 @@ class FaqController extends Controller {
         ]);
 
         try {
-            if (is_null($faq)) $faq = new FAQ();
+            $category = null;
+            $categoryId = $request->category_id ?? $request->subcategory_id ?? null;
 
-            $onlyText = html_entity_decode(strip_tags($request->text), ENT_QUOTES);
-            $faq->title = $request->title;
-            $faq->text = $request->text;
-            $faq->annotation = mb_substr($onlyText, 0, 512, 'UTF-8');
+            if (!is_null($categoryId)) {
+                $category = Category::find($categoryId);
 
-            if (!$faq->save()) throw new \Exception('Failed to store FAQ');
+                if (!$category) throw new \Exception('Category not found');
+            }
+
+            DB::transaction(function() use(&$request, &$faq, &$category) {
+                $onlyText = html_entity_decode(strip_tags($request->text), ENT_QUOTES);
+
+                if (is_null($faq)) {
+                    if ($category && !$category->increment('faq_counter')) throw new \Exception('Failed to store FAQ');
+
+                    $faq = new FAQ();
+                }
+
+                $faq->title = $request->title;
+                $faq->text = $request->text;
+                $faq->annotation = mb_substr($onlyText, 0, 512, 'UTF-8');
+                $faq->category_id = $request->input('category_id');
+
+                if (!$faq->save()) throw new \Exception('Failed to store FAQ');
+
+            });
 
             $link = route('faq.view', [$faq->id]);
 
             return back()->with('success', "<a href='{$link}'>Заметка</a> успешно сохранена");
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return back()->with('error', 'Не удалось сохранить');
         }
     }

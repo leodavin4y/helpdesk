@@ -6,7 +6,17 @@
     <div class="container">
         <ol class="breadcrumb bg-light">
             <li class="breadcrumb-item"><a href="/">Главная</a></li>
-            <li class="breadcrumb-item active">База знаний</li>
+
+            @if (is_null($selected_category))
+                <li class="breadcrumb-item active">База знаний</li>
+            @else
+                <li class="breadcrumb-item">
+                    <a href="{{ route('faq') }}">База знаний</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    {{ $selected_category->name }}
+                </li>
+            @endif
         </ol>
 
         <h1 class="h3 py-3 text-center">База знаний</h1>
@@ -63,41 +73,85 @@
                         </div>
                     </div>
                 </form>
+            </div>
 
-                @isset($query)
-                    <div class="h5 py-2">Найдено результатов: {{ $results->total() }}</div>
-                @elseif (count($results) > 0)
-                    <div class="h5 py-2">Часто возникающие проблемы:</div>
-                @else
-                    <div class="alert alert-info">В данный момент база знаний пуста ...</div>
-                @endif
-
-                @foreach($results as $faq)
-                    <div class="card mb-3 shadow-sm">
-                        <div class="card-body">
-                            <div class="clearfix">
-                                <h5 class="card-title float-md-left">
-                                    {{ $faq->title }}
-                                </h5>
-
-                                <span class="small text-muted float-md-right">{{ date('d-m-Y, H:i', strtotime($faq->created_at)) }}</span>
-                            </div>
-
-                            <div class="card-text text-overflow mb-2">
-                                {{ $faq->annotation }}
-                            </div>
-
-                            <a href="{{ route('faq.view', [$faq->id]) }}" class="btn btn-primary">Детальнее</a>
-
-                            @if (($user = Auth::user()) && $user->role === 3)
-                                <a href="{{ route('faq.edit', [$faq->id]) }}" class="btn btn-sm btn-link">Изменить</a>
-                                <a href="{{ route('faq.delete', [$faq->id]) }}" class="btn btn-sm btn-link text-danger">Удалить</a>
-                            @endif
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <div class="h5 py-2">Категории</div>
+                        <div class="border rounded shadow-sm p-3">
+                            <ul class="d-block p-0 m-0" style="list-style-type:none;">
+                                @foreach($parent_categories as $parent)
+                                    <li>
+                                        <i class="fa fa-tag text-muted" aria-hidden="true"></i>
+                                        <a href="{{ route('faq', ['c' => $parent->id]) }}">{{ $parent->name }}</a>
+                                        <ul class="d-block p-0 ml-2 small" style="list-style-type:none;">
+                                            @foreach($parent->child as $category)
+                                                <li>
+                                                    <i class="fa fa-share text-muted pr-1" aria-hidden="true"></i>
+                                                    <a href="{{ route('faq', ['c' => $category->id]) }}">{{ $category->name }}</a>
+                                                    <ul class="d-block ml-2 p-0 mt-1" style="list-style-type:none;">
+                                                        @foreach($category->getFaqsByCategory() as $faq)
+                                                            <li>
+                                                                <i class="fa fa-check-circle-o text-muted" aria-hidden="true"></i>
+                                                                <a class="mb-1" href="{{ route('faq.view', [$faq->id]) }}" style="line-height: 1.1;">
+                                                                    {{ $faq->title }}
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
-                @endforeach
 
-                {{ $results->links() }}
+                    <div class="col-12 col-md-8">
+                        @isset($query)
+                            <div class="h5 py-2">Найдено результатов: {{ $results->total() }}</div>
+                        @elseif (count($results) > 0)
+                            <div class="h5 py-2">
+                                Часто возникающие проблемы
+                                @if (!is_null($selected_category))
+                                    | {{ $selected_category->name }}
+                                @endif
+                                ({{ $results->total() }})
+                            </div>
+                        @else
+                            <div class="alert alert-info mt-5">В данный момент база знаний пуста ...</div>
+                        @endif
+
+                        @foreach($results as $faq)
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-body">
+                                    <div class="clearfix">
+                                        <h5 class="card-title float-md-left">
+                                            {{ $faq->title }}
+                                        </h5>
+
+                                        <span class="small text-muted float-md-right">{{ date('d-m-Y, H:i', strtotime($faq->created_at)) }}</span>
+                                    </div>
+
+                                    <div class="card-text text-overflow mb-2">
+                                        {{ $faq->annotation }}
+                                    </div>
+
+                                    <a href="{{ route('faq.view', [$faq->id]) }}" class="btn btn-primary">Детальнее</a>
+
+                                    @if (($user = Auth::user()) && $user->role === 3)
+                                        <a href="{{ route('faq.edit', [$faq->id]) }}" class="btn btn-sm btn-link">Изменить</a>
+                                        <a href="{{ route('faq.delete', [$faq->id]) }}" class="btn btn-sm btn-link text-danger">Удалить</a>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+
+                        {{ $results->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

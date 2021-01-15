@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Faq;
 
 class Category extends Model
 {
@@ -25,8 +26,25 @@ class Category extends Model
      */
     protected $hidden = [];
 
+    public $timestamps = false;
+
     public function parent()
     {
         return $this->hasOne('App\Models\Category', 'id', 'parent_id');
+    }
+
+    public function child()
+    {
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id');
+    }
+
+    public function getFaqsByCategory()
+    {
+        return faq::where('category_id', '=', $this->id)->get();
+    }
+
+    public function getFaqsByCategoryWithPaginate()
+    {
+        return faq::where('category_id', '=', $this->id)->paginate();
     }
 }
