@@ -45,6 +45,13 @@ class Category extends Model
 
     public function getFaqsByCategoryWithPaginate()
     {
-        return faq::where('category_id', '=', $this->id)->paginate();
+        if (is_null($this->parent_id)) {
+            $childIds = array_map(function($child) {return $child['id'];}, $this->child()->get()->toArray());
+            $childIds = array_merge([$this->id], $childIds);
+
+            return faq::whereIn('category_id', $childIds)->paginate();
+        } else {
+            return faq::where('category_id', '=', $this->id)->paginate();
+        }
     }
 }
