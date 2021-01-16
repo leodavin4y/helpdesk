@@ -44,7 +44,7 @@
                 <tr id="req{{ $req->id }}">
                     <th scope="row">{{ $req->id }}</th>
                     <td>{{ $req->created_at }}</td>
-                    <td>{{ $req->category->parent->name }}</td>
+                    <td><?=$req->category->parent_id ? $req->category->parent->name : $req->category->name?></td>
                     <td>{{ $req->priority->name }}</td>
                     <td>
                         <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
