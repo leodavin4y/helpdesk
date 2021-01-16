@@ -47,4 +47,9 @@ class Request extends Model
     {
         return $this->hasOne('App\Models\User', 'id', 'worker_id');
     }
+
+    public function files()
+    {
+        return $this->hasMany('App\Models\RequestFile', 'request_id', 'id');
+    }
 }

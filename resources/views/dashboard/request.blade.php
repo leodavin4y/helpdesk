@@ -12,11 +12,28 @@
         <h1 class="h5 pt-3">Заявка #{{ $request->id }}</h1>
         <h2 class="h5 pb-3">{{ $request->title }}</h2>
         <div>Инициатор: {{ $request->user->name }}</div>
+
         @if ($request->worker)
             <div>Исполнитель: {{ $request->worker->name }}</div>
         @endif
+
         <div>Статус: {{ $request->status->name }}</div>
         <p>Описание: {{ $request->description }}</p>
+
+        @if (count(($files = $request->files)) > 0)
+            <div>
+                <div>Прикрепленные файлы ({{ count($files) }}):</div>
+                <ol>
+                    @foreach ($files as $file)
+                        <li>
+                            <a href="{{ route('file.get', [$file->name]) }}" download>
+                                {{ $file->original_name }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ol>
+            </div>
+        @endif
 
         @if(session('success'))
             <div class="alert alert-success">

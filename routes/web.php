@@ -58,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/dashboard/requests/{id}/messages/new', 'DashboardController@messageNew')
         ->where('id', '[0-9]+')
         ->name('dashboard.messages.new');
+
+    Route::get('/files/{name}', 'FileController@get')->name('file.get');
 });
 
 Route::middleware(['auth', 'can:user'])->group(function () {

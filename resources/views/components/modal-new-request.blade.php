@@ -1,6 +1,6 @@
 <div class="modal fade" id="requestNewModal" tabindex="-1" role="dialog" aria-labelledby="requestNewModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <form method="post" class="modal-content" action="{{ route('dashboard.request.store') }}" data-action="{{ route('dashboard.request.store') }}">
+        <form method="post" enctype="multipart/form-data" class="modal-content" action="{{ route('dashboard.request.store') }}" data-action="{{ route('dashboard.request.store') }}">
             {{ csrf_field() }}
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Новая заявка</h5>
@@ -45,6 +45,13 @@
                     <label for="description">Описание</label>
                     <textarea name="description" id="description" class="form-control" placeholder="Полное описание проблемы" required></textarea>
                 </div>
+
+                <div class="input-group">
+                    <div class="custom-file">
+                        <label for="files" class="custom-file-label">Прикрепить вложения</label>
+                        <input type="file" name="files[]" id="files" multiple class="form-control custom-file-input" lang="ru">
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
@@ -53,3 +60,15 @@
         </form>
     </div>
 </div>
+
+<style>
+    .custom-file-label::after { content: "Выбрать";}
+</style>
+
+<script>
+    window.addEventListener('load', () => {
+        const input = $('#files');
+
+        input.on('change', () => input.prev().text('Файлов выбрано: ' + input[0].files.length));
+    });
+</script>

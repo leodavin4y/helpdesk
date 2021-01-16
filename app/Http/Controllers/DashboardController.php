@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Message;
 use App\Models\Priority;
 use App\Models\Request as Req;
+use App\Models\RequestFile;
 use App\Models\RequestHistory;
 use App\Models\User;
 use App\Models\RequestStatus;
@@ -16,6 +17,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\RequestRepositoryInterface;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -155,23 +157,42 @@ class DashboardController extends Controller
             'subcategory_id' => 'nullable|string|min:1|max:10',
             'priority_id' => 'required|string|min:1|max:10',
             'title' => 'required|string|min:2|max:255',
-            'description' => 'required|string|min:2|max:60000'
+            'description' => 'required|string|min:2|max:60000',
+            'files' => 'nullable|array|min:1'
         ]);
 
         try {
             $user = Auth::user();
             $subCatId = $request->input('subcategory_id');
 
-            $req = new Req();
+            DB::transaction(function() use(&$user, &$subCatId, &$request) {
+                $req = new Req();
 
-            $req->category_id = $subCatId ? $subCatId : $request->input('category_id');
-            $req->priority_id = $request->input('priority_id');
-            $req->user_id = $user->id;
-            $req->title = $request->input('title');
-            $req->description = $request->input('description');
-            $req->status_id = 1;
+                $req->category_id = $subCatId ? $subCatId : $request->input('category_id');
+                $req->priority_id = $request->input('priority_id');
+                $req->user_id = $user->id;
+                $req->title = $request->input('title');
+                $req->description = $request->input('description');
+                $req->status_id = 1;
 
-            if (!$req->save()) throw new \Exception('Failed to store request');
+                if (!$req->save()) throw new \Exception('Failed to store request');
+
+                $files = $request->file('files');
+
+                if (count($files) > 0) {
+                    foreach ($files as $index => $file) {
+                        $path = $file->store('files');
+
+                        $requestFile = new RequestFile();
+                        $requestFile->request_id = $req->id;
+                        $requestFile->type = $file->extension();
+                        $requestFile->original_name = $file->getClientOriginalName();
+                        $requestFile->name = basename($path);
+
+                        if (!$requestFile->save()) throw new \Exception('Failed to store file');
+                    }
+                }
+            });
 
             return back()->with('success', 'Успешно сохранено');
         } catch (\Exception $e) {
