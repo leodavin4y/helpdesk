@@ -66,4 +66,18 @@ class RequestRepository implements RequestRepositoryInterface
             ")
         );
     }
+
+    public function reportCountLastWeek(): array
+    {
+        return DB::select(
+            DB::raw("
+                SELECT COUNT(*) as counter, DATE(created_at) as p 
+                  FROM `requests` 
+                    WHERE created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY) 
+                  GROUP BY p
+                  ORDER BY p DESC
+                LIMIT 7
+            ")
+        );
+    }
 }

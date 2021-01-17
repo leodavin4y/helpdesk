@@ -11,4 +11,6 @@ interface RequestRepositoryInterface
     public function reportCountByMonth(): array;
 
     public function reportCountByYear(): array;
+
+    public function reportCountLastWeek(): array;
 }

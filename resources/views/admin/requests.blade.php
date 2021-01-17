@@ -27,6 +27,20 @@
         </div>
 
         <div class="row">
+            <div class="col-12">
+                <form class="d-inline-block mb-3" method="post" onchange="$(this).submit()">
+                    {{ csrf_field() }}
+                    <label>Тип графика</label>
+                    <select class="form-control d-inline-block" name="type">
+                        @foreach ($types as $type => $name)
+                            <option value="{{ $type }}" <?=$type === $selected_type ? 'selected' : ''?>>
+                                {{ $name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+
             <div class="col-12 col-md-6">
                 {!! $requestChart->container() !!}
             </div>
