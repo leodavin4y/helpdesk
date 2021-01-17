@@ -9,18 +9,27 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestRepository implements RequestRepositoryInterface
 {
+    public function find(int $id)
+    {
+        return Request::find($id);
+    }
+
     public function update(int $id, array $params): bool
     {
-        $request = Request::find($id);
+        $request = $this->find($id);
 
         if (!$request) throw new \Exception('Заявка не существует');
+
+        if (!is_null($request->worker_id) && is_null($params['worker_id'])) {
+            $params['worker_id'] = $request->worker_id;
+        }
 
         return $request->fill($params)->save();
     }
 
     public function updateWithHistory(int $id, array $params): void
     {
-        DB::transaction(function() use(&$id, &$params) {
+        DB::transaction(function() use(&$id, &$params, &$request) {
             if (!$this->update($id, $params)) throw new \Exception('Ошибка сохранения заявки');
 
             $user = Auth::user();
