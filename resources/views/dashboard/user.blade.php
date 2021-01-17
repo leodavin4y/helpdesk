@@ -58,13 +58,15 @@
                             >
                                 Открыть
                             </button>
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-link text-danger"
-                                onclick="deleteRequest({{ $req->id }})"
-                            >
-                                Удалить
-                            </button>
+                            @if ($active_tab == 1)
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-link text-danger"
+                                    onclick="deleteRequest({{ $req->id }})"
+                                >
+                                    Удалить
+                                </button>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
