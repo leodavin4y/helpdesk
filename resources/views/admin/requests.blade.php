@@ -13,7 +13,7 @@
         <h1 class="h3 py-3 text-center">Администрирование</h1>
 
         <div class="mb-3">
-            <h2 class="h4 d-inline-block">Граф заявок</h2>
+            <h2 class="h4 d-inline-block">Количество заявок</h2>
 
             <form class="d-inline-block ml-2" onchange="$(this).submit()">
                 <select class="form-control" name="period" id="period">
