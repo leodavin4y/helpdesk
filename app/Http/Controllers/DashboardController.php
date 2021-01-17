@@ -163,7 +163,7 @@ class DashboardController extends Controller
             'priority_id' => 'required|string|min:1|max:10',
             'title' => 'required|string|min:2|max:255',
             'description' => 'required|string|min:2|max:60000',
-            'files' => 'nullable|array|min:1'
+            'files' => 'nullable|array'
         ]);
 
         try {
@@ -184,7 +184,7 @@ class DashboardController extends Controller
 
                 $files = $request->file('files');
 
-                if (count($files) > 0) {
+                if ($files && count($files) > 0) {
                     foreach ($files as $index => $file) {
                         $path = $file->store('files');
 
