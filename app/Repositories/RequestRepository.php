@@ -20,7 +20,7 @@ class RequestRepository implements RequestRepositoryInterface
 
         if (!$request) throw new \Exception('Заявка не существует');
 
-        if (!is_null($request->worker_id) && is_null($params['worker_id'])) {
+        if (!is_null($request->worker_id ?? null) && is_null($params['worker_id'] ?? null)) {
             $params['worker_id'] = $request->worker_id;
         }
 

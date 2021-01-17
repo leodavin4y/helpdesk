@@ -226,7 +226,7 @@ class DashboardController extends Controller
         ]);
 
         try {
-            $workerId = $request->worker_id;
+            $workerId = $request->worker_id ?? null;
             $statusId = !is_null($workerId) ? RequestStatus::WORKER_ASSIGNED : $request->status_id;
             $this->requestRepository->updateWithHistory($id, [
                 'status_id' => $statusId,
