@@ -122,4 +122,6 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/dashboard/users/{role}/get', 'DashboardController@getUsers')
         ->where('role', '[0-9]+')
         ->name('dashboard.users.get');
+
+    Route::get('/admin/stat/requests', 'RequestChartController@index')->name('stat.requests');
 });

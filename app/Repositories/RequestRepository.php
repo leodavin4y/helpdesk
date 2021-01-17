@@ -42,4 +42,28 @@ class RequestRepository implements RequestRepositoryInterface
             if ((new RequestHistoryRepository)->store($data) === false) throw new \Exception('Ошибка сохранения заявки');
         });
     }
+
+    public function reportCountByMonth(): array
+    {
+        return DB::select(
+            DB::raw("
+                SELECT COUNT(*) as counter, MONTH(created_at) as p 
+                  FROM `requests` 
+                    WHERE YEAR(created_at) = YEAR(CURRENT_DATE)
+                  GROUP BY p
+            ")
+        );
+    }
+
+    public function reportCountByYear(): array
+    {
+        return DB::select(
+            DB::raw("
+                SELECT COUNT(*) as counter, YEAR(created_at) as p 
+                  FROM `requests` 
+                    WHERE YEAR(created_at) = YEAR(CURRENT_DATE)
+                  GROUP BY p
+            ")
+        );
+    }
 }
