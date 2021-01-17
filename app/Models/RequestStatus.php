@@ -8,6 +8,18 @@ use App\Models\Request;
 class RequestStatus extends Model
 {
 
+    const NEW = 1;
+
+    const WORKER_ASSIGNED = 2;
+
+    const IN_PROGRESS = 3;
+
+    const AWAIT_APPROVE = 4;
+
+    const SOLVED = 5;
+
+    const CLOSED = 6;
+
     protected $table = 'request_statuses';
 
     /**

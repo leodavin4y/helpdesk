@@ -17,12 +17,15 @@ table button {
     padding-bottom: 0 !important;
 }
 /* Статусы */
-.status1 {
+.status1 { /* New */
     background-color: #f5c6cc;
 }
-.status2 {
+.status2 { /* Worker selected */
     background-color: #b8daff;
 }
-.status3 {
+.status3 { /* In progress */
+    background-color: #ffeeba;
+}
+.status4 { /* Review */
     background-color: #c3e5ca;
 }

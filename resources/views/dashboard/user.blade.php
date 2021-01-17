@@ -38,7 +38,17 @@
                             <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
                         </td>
                         <td >
-                            @if ($req->status_id === 3)
+                            @if ($req->status_id === App\Models\RequestStatus::AWAIT_APPROVE)
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-link text-danger"
+                                    data-toggle="modal"
+                                    data-target="#reviewFailed"
+                                    onclick="reviewFailed({{ $req->id }}, '{{ $req->title }}')"
+                                    title="Проблема осталась"
+                                >
+                                    <i class="fa fa-repeat" aria-hidden="true"></i>
+                                </button>
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-link text-success"
@@ -107,6 +117,31 @@
             </form>
         </div>
     </div>
+
+    <!-- Review Failed Modal -->
+    <div class="modal fade" id="reviewFailed" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <form method="post" data-action="{{ route('dashboard.requests.repeat', 0) }}" class="modal-content">
+                {{ csrf_field() }}
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Проблема повторяется</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>Вы уверены что заявка <q class="request_name"></q> не решена?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-success">Подтвердить</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -116,5 +151,13 @@
 
         form.attr('action', form.attr('data-action').replace('0', id));
         $('#reviewDone .request_name').text(name);
+    }
+
+    function reviewFailed(id, name)
+    {
+        const form = $('#reviewFailed form');
+
+        form.attr('action', form.attr('data-action').replace('0', id));
+        $('#reviewFailed .request_name').text(name);
     }
 </script>

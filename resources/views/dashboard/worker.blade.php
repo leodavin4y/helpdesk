@@ -41,7 +41,19 @@
                         </td>
                         <td>{{ $req->user->name }}</td>
                         <td>
-                            @if ($req->status_id === 2)
+                            @if ($req->status_id === App\Models\RequestStatus::WORKER_ASSIGNED)
+                                <form method="post" action="{{ route('dashboard.requests.worker.start', [$req->id]) }}" class="d-inline-block">
+                                    {{ csrf_field() }}
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-link text-success py-0"
+                                        title="Приступить к выполнению"
+                                    >
+                                        <i class="fa fa-play-circle" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            @endif
+                            @if ($req->status_id === App\Models\RequestStatus::IN_PROGRESS)
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-link text-success py-0"

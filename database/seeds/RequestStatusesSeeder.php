@@ -20,6 +20,9 @@ class RequestStatusesSeeder extends Seeder
                 'name' => 'Назначен исполнитель',
             ],
             [
+                'name' => 'В работе',
+            ],
+            [
                 'name' => 'На проверке',
             ],
             [

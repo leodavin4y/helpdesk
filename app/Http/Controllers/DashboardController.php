@@ -17,7 +17,6 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\RequestRepositoryInterface;
-use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -72,8 +71,13 @@ class DashboardController extends Controller
 
         $user = Auth::user();
         $status = session('status_id', 1);
-        $activeIds = [1, 2, 3];
-        $inactiveIds = [4, 5];
+        $activeIds = [
+            RequestStatus::NEW,
+            RequestStatus::WORKER_ASSIGNED,
+            RequestStatus::IN_PROGRESS,
+            RequestStatus::AWAIT_APPROVE
+        ];
+        $inactiveIds = [RequestStatus::SOLVED, RequestStatus::CLOSED];
         $statuses = $status ? $activeIds : $inactiveIds;
         $counter = Req::whereIn('status_id', !$status ? $activeIds : $inactiveIds)
             ->where('user_id', '=', $user->id)
@@ -119,10 +123,11 @@ class DashboardController extends Controller
                 'selected' => $status
             ],
             'tabs' => [
-                ['id' => 2, 'name' => 'К исполнению'],
-                ['id' => 3, 'name' => 'Ожидают проверки'],
-                ['id' => 4, 'name' => 'Решенные'],
-                ['id' => 5, 'name' => 'Закрытые'],
+                ['id' => RequestStatus::WORKER_ASSIGNED, 'name' => 'К исполнению'],
+                ['id' => RequestStatus::IN_PROGRESS, 'name' => 'В работе'],
+                ['id' => RequestStatus::AWAIT_APPROVE, 'name' => 'Ожидают проверки'],
+                ['id' => RequestStatus::SOLVED, 'name' => 'Решенные'],
+                ['id' => RequestStatus::CLOSED, 'name' => 'Закрытые'],
             ],
             'active_tab' => $status
         ]);
@@ -173,7 +178,7 @@ class DashboardController extends Controller
                 $req->user_id = $user->id;
                 $req->title = $request->input('title');
                 $req->description = $request->input('description');
-                $req->status_id = 1;
+                $req->status_id = RequestStatus::NEW;
 
                 if (!$req->save()) throw new \Exception('Failed to store request');
 
@@ -222,7 +227,7 @@ class DashboardController extends Controller
 
         try {
             $workerId = $request->worker_id;
-            $statusId = !is_null($workerId) ? 2 : $request->status_id;
+            $statusId = !is_null($workerId) ? RequestStatus::WORKER_ASSIGNED : $request->status_id;
             $this->requestRepository->updateWithHistory($id, [
                 'status_id' => $statusId,
                 'worker_id' => $workerId
@@ -234,10 +239,21 @@ class DashboardController extends Controller
         return back()->with('success', 'Статус заявки изменен');
     }
 
+    public function workerStart(int $id)
+    {
+        try {
+            $this->requestRepository->updateWithHistory($id, ['status_id' => RequestStatus::IN_PROGRESS]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Статус заявки изменен');
+    }
+
     public function workerDone(int $id)
     {
         try {
-            $this->requestRepository->updateWithHistory($id, ['status_id' => 3]);
+            $this->requestRepository->updateWithHistory($id, ['status_id' => RequestStatus::AWAIT_APPROVE]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -248,7 +264,18 @@ class DashboardController extends Controller
     public function initiatorSolved(int $id)
     {
         try {
-            $this->requestRepository->updateWithHistory($id, ['status_id' => 4]);
+            $this->requestRepository->updateWithHistory($id, ['status_id' => RequestStatus::SOLVED]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Статус заявки изменен');
+    }
+
+    public function initiatorRepeat(int $id)
+    {
+        try {
+            $this->requestRepository->updateWithHistory($id, ['status_id' => RequestStatus::IN_PROGRESS]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

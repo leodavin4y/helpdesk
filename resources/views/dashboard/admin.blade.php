@@ -33,7 +33,7 @@
                 <th scope="col">Приоритет</th>
                 <th scope="col">Заголовок</th>
                 <th scope="col">Инициатор</th>
-                @if ($request_statuses['selected'] >= 2)
+                @if ($request_statuses['selected'] >= App\Models\RequestStatus::WORKER_ASSIGNED)
                     <th scope="col">Исполнитель</th>
                 @endif
                 <th scope="col">Действие</th>
@@ -52,7 +52,7 @@
                     <td>
                         {{ $req->user->name }}
                     </td>
-                    @if ($request_statuses['selected'] >= 2)
+                    @if ($request_statuses['selected'] >= App\Models\RequestStatus::WORKER_ASSIGNED)
                         <td>
                             @if ($req->worker)
                                 <a href="{{ route('admin.user', [$req->worker->id]) }}">{{ $req->worker->name }}</a>

@@ -47,6 +47,10 @@ Route::middleware(['auth'])->group(function () {
         ->where('id', '[0-9]+')
         ->name('dashboard.requests.solved');
 
+    Route::post('/dashboard/requests/{id}/repeat', 'DashboardController@initiatorRepeat')
+        ->where('id', '[0-9]+')
+        ->name('dashboard.requests.repeat');
+
     Route::get('/dashboard/requests/{id}', 'DashboardController@show')
         ->where('id', '[0-9]+')
         ->name('dashboard.request.show');
@@ -68,6 +72,11 @@ Route::middleware(['auth', 'can:user'])->group(function () {
 
 Route::middleware(['auth', 'can:worker'])->group(function () {
     Route::get('/worker/dashboard', 'DashboardController@workerBoard')->name('dashboard.worker');
+
+    // Работник устанавливает статус заявки - "В работе"
+    Route::post('/dashboard/requests/{id}/start', 'DashboardController@workerStart')
+        ->where('id', '[0-9]+')
+        ->name('dashboard.requests.worker.start');
 
     // Работник устанавливает статус заявки - "на проверке"
     Route::post('/dashboard/requests/{id}/done', 'DashboardController@workerDone')
