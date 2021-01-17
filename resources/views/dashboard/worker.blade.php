@@ -48,8 +48,9 @@
                                     data-toggle="modal"
                                     data-target="#workerStatus"
                                     onclick="showWorkerStatusModal({{ $req->id }}, '{{ $req->title }}')"
+                                    title="На проверку"
                                 >
-                                    На проверку
+                                    <i class="fa fa-check" aria-hidden="true"></i>
                                 </button>
                             @endif
 
@@ -59,16 +60,9 @@
                                 data-toggle="modal"
                                 data-target="#requestShow"
                                 onclick="showRequest({{ $req->id }})"
+                                title="Открыть"
                             >
-                                Открыть
-                            </button>
-
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-link text-danger py-0"
-                                onclick="deleteRequest({{ $req->id }})"
-                            >
-                                Удалить
+                                <i class="fa fa-eye" aria-hidden="true"></i>
                             </button>
                         </td>
                     </tr>

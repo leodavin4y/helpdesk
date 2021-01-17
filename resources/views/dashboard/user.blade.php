@@ -45,8 +45,9 @@
                                     data-toggle="modal"
                                     data-target="#reviewDone"
                                     onclick="reviewDone({{ $req->id }}, '{{ $req->title }}')"
+                                    title="Проблема решена"
                                 >
-                                    Проблема решена
+                                    <i class="fa fa-check" aria-hidden="true"></i>
                                 </button>
                             @endif
                             <button
@@ -55,16 +56,18 @@
                                 data-toggle="modal"
                                 data-target="#requestShow"
                                 onclick="showRequest({{ $req->id }})"
+                                title="Открыть"
                             >
-                                Открыть
+                                <i class="fa fa-eye" aria-hidden="true"></i>
                             </button>
                             @if ($active_tab == 1)
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-link text-danger"
                                     onclick="deleteRequest({{ $req->id }})"
+                                    title="Удалить"
                                 >
-                                    Удалить
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
                                 </button>
                             @endif
                         </td>

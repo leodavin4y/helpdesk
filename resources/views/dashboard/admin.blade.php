@@ -54,18 +54,23 @@
                     </td>
                     @if ($request_statuses['selected'] >= 2)
                         <td>
-                            <a href="{{ route('admin.user', [$req->worker->id]) }}">{{ $req->worker->name }}</a>
+                            @if ($req->worker)
+                                <a href="{{ route('admin.user', [$req->worker->id]) }}">{{ $req->worker->name }}</a>
+                            @else
+                                <span>[null]</span>
+                            @endif
                         </td>
                     @endif
-                    <td >
+                    <td>
                         <button
                             type="button"
                             class="btn btn-sm btn-link text-primary"
                             data-toggle="modal"
                             data-target="#requestShow"
                             onclick="showRequest({{ $req->id }})"
+                            title="Открыть"
                         >
-                            Открыть
+                            <i class="fa fa-eye" aria-hidden="true"></i>
                         </button>
                         <button
                             type="button"
@@ -73,15 +78,17 @@
                             data-toggle="modal"
                             data-target="#requestStatusesModal"
                             onclick="showStatusModal({{ $req->id }})"
+                            title="Статус"
                         >
-                            Статус
+                            <i class="fa fa-wrench" aria-hidden="true"></i>
                         </button>
                         <button
                             type="button"
                             class="btn btn-sm btn-link text-danger"
                             onclick="deleteRequest({{ $req->id }})"
+                            title="Удалить"
                         >
-                            Удалить
+                            <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
     
                     </td>
