@@ -138,7 +138,8 @@ class FaqController extends Controller {
 
         try {
             $category = null;
-            $categoryId = $request->category_id ?? $request->subcategory_id ?? null;
+            // $categoryId = $request->category_id ?? $request->subcategory_id ?? null;
+            $categoryId = $request->subcategory_id ?? $request->category_id ?? null;
 
             if (!is_null($categoryId)) {
                 $category = Category::find($categoryId);
@@ -158,7 +159,7 @@ class FaqController extends Controller {
                 $faq->title = $request->title;
                 $faq->text = $request->text;
                 $faq->annotation = mb_substr($onlyText, 0, 512, 'UTF-8');
-                $faq->category_id = $request->input('category_id');
+                $faq->category_id = $category ? $category->id : null;
 
                 if (!$faq->save()) throw new \Exception('Failed to store FAQ');
 

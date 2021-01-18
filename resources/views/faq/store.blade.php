@@ -99,7 +99,7 @@
                         <div class="form-group">
                             <label for="faq_category">Категория</label>
                             <select name="category_id" id="faq_category" class="form-control">
-                                <option>[Без категории]</option>
+                                <option value>[Без категории]</option>
                                 @foreach ($categories['parent'] as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
@@ -109,6 +109,7 @@
                         <div class="subcategory form-group">
                             <label for="category">Подкатегория</label>
                             <select name="subcategory_id" id="category" class="form-control">
+                                <option value>[Без категории]</option>
                                 @foreach ($categories['sub'] as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
@@ -156,13 +157,13 @@
 
                 subSelect.empty();
 
+                subSelect.append($(`<option value="">[Без категории]</option>`));
                 subCategories.forEach(sub => {
                     if (sub.parent_id === catId) {
                         subExist = true;
                         subSelect.append($(`<option value="${sub.id}">${sub.name}</option>`))
                     }
                 });
-
                 subExist ? subSelectWrap.removeClass('d-none') : subSelectWrap.addClass('d-none');
             };
 
