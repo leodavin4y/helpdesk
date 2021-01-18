@@ -29,3 +29,13 @@ table button {
 .status4 { /* Review */
     background-color: #c3e5ca;
 }
+/* Приоритеты */
+.priority1 {
+    background-color: #c3e5ca;
+}
+.priority2 {
+    background-color: #ffeeba;
+}
+.priority3 {
+    background-color: #f5c6cc;
+}

@@ -3,6 +3,7 @@
         <div class="col-4 col-md-2 col-lg-1">
             <h2 class="h5">Заявки</h2>
         </div>
+
         <div class="col-8 col-md-10 col-lg-11">
             <form method="post" id="statusForm" class="position-relative" style="top: -5px;">
                 {{ csrf_field() }}
@@ -45,7 +46,7 @@
                     <th scope="row">{{ $req->id }}</th>
                     <td>{{ $req->created_at }}</td>
                     <td><?=$req->category->parent_id ? $req->category->parent->name : $req->category->name?></td>
-                    <td>{{ $req->priority->name }}</td>
+                    <td class="priority{{ $req->priority->id }}">{{ $req->priority->name }}</td>
                     <td>
                         <a href="{{ route('dashboard.request.show', [$req->id]) }}">{{ $req->title }}</a>
                     </td>

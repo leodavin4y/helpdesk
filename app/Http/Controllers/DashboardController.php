@@ -142,6 +142,7 @@ class DashboardController extends Controller
         $status = session('status_id', 1);
         $requests = Req::where('status_id', '=', $status)
             ->with('user')
+            ->orderBy('priority_id', 'DESC')
             ->orderBy('id', 'DESC')
             ->paginate();
 
