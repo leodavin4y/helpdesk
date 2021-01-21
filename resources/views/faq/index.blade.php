@@ -90,16 +90,6 @@
                                                 <li>
                                                     <i class="fa fa-share text-muted pr-1" aria-hidden="true"></i>
                                                     <a href="{{ route('faq', ['c' => $category->id]) }}">{{ $category->name }}</a>
-                                                    <ul class="d-block ml-2 p-0 mt-1" style="list-style-type:none;">
-                                                        @foreach($category->getFaqsByCategory() as $faq)
-                                                            <li>
-                                                                <i class="fa fa-check-circle-o text-muted" aria-hidden="true"></i>
-                                                                <a class="mb-1" href="{{ route('faq.view', [$faq->id]) }}" style="line-height: 1.1;">
-                                                                    {{ $faq->title }}
-                                                                </a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
                                                 </li>
                                             @endforeach
                                         </ul>
