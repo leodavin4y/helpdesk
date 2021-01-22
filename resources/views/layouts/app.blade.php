@@ -19,8 +19,8 @@
 
 <body>
     <!-- Menu-->
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <a href="{{ route('home') }}" class="my-0 mr-md-auto font-weight-normal">
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow" style="background: url(/img/logo.jpg);background-size: 30px;background-repeat: no-repeat;background-position: 10px;">
+        <a href="{{ route('home') }}" class="my-0 ml-4 mr-md-auto font-weight-normal">
             <h5 class="font-weight-normal">
                 Портал Технической Поддержки
             </h5>
